@@ -57,6 +57,8 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
+	bool isFloor(glm::vec3 p_position);
+
 #ifdef NUITRACK		
 	//--------------------------------------------------------------
 	// REALSENSE
@@ -88,7 +90,7 @@ public:
 	ofEasyCam cam;
 
 	Player* player;
-	Floor* floor;
+	list<Floor*> floors;
 };
 
 class Player
@@ -97,12 +99,14 @@ public:
 	Player();
 	ofNode node;
 	glm::vec3 position = glm::vec3(0, 0, 0);
-	float yVelocity = 1;
+	float yVelocity = 10;
 	float zVelocity = 0;
 	float gravity;
 	float hitbox = 30;
 	void render();
 	void update();
+	bool falling = false;
+	bool jumping = false;
 };
 
 class Floor
@@ -113,3 +117,4 @@ public:
 	float size;
 	void render();
 };
+

@@ -19,9 +19,21 @@ void ofApp::setup() {
 	cam.tilt(70);
 
 	player = new Player();
-	floor = new Floor();
 
-	player->gravity = -10.0;
+	Floor* fInit = new Floor();
+	fInit->position = glm::vec3(0, 600, 0);
+	fInit->size = 1500;
+	floors.push_back(fInit);
+
+	for (int i = 3; i < 15; i++)
+	{
+		Floor* f = new Floor();
+		f->position = glm::vec3(0, i * 600, 0);
+		f->size = 500;
+		floors.push_back(f);
+	}
+
+	player->gravity = -3.0;
 
 #ifdef NUITRACK
 	// REALSENSE
@@ -125,15 +137,6 @@ void ofApp::update()
 		}
 	}
 #endif
-
-	/*
-	if (zVelocity <= 0)
-		zVelocity = 0;
-	if(cam.getGlobalPosition().z > 225)
-		zVelocity = zVelocity + gravity;
-
-	cam.setPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + yVelocity, cam.getGlobalPosition().z + zVelocity);
-	*/
 }
 
 #ifdef NUITRACK
@@ -191,11 +194,17 @@ void ofApp::updatePointcloud() {
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-	ofDrawAxis(100);
+	player->falling = isFloor(player->position);
+
+	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
 	cam.begin();
 
 	player->render();
-	floor->render();
+
+	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	{
+		(*it)->render();
+	}
 
 	cam.end();
 
@@ -524,13 +533,16 @@ void ofApp::drawPointcloud() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-
+	if (key == 's')
+	{
+		player->zVelocity = 30.0;
+		player->jumping = true;
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-	if (key == 's')
-		player->zVelocity = 25.0;
+	
 }
 
 //--------------------------------------------------------------
@@ -585,11 +597,24 @@ Player::Player()
 
 void Player::render()
 {
-	if (zVelocity < 0)
-		zVelocity = 0;
-	else if (position.z > 15)
+	if (position.z <= 15 && falling == 0)
+	{
+		cout << "DEAD" << endl;
 		zVelocity += gravity;
+	}
+	else if (position.z > 15 && jumping == 1)
+	{
+		zVelocity += gravity;
+	}
 
+	if (position.z < 15 && jumping == 1)
+	{
+		zVelocity = 0;
+		jumping = 0;
+		position.z = 15;
+	}
+
+	cout << jumping << endl;
 	ofSetColor(0, 255, 0);
 	ofFill();
 	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
@@ -609,5 +634,16 @@ void Floor::render()
 {
 	ofSetColor(255, 0, 0);
 	ofFill();
-	ofDrawPlane(position, 100, 100);
+	ofDrawPlane(position, size, size);
+}
+
+bool ofApp::isFloor(glm::vec3 p_position)
+{
+	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	{
+		if (p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
+			return true;
+	}
+
+	return false;
 }
