@@ -16,7 +16,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 
 	cam.setGlobalPosition(glm::vec3(0, 0, 0));
-	cam.tilt(70);
+	cam.tilt(80);
 
 	player = new Player();
 
@@ -31,6 +31,14 @@ void ofApp::setup() {
 		f->position = glm::vec3(0, i * 600, 0);
 		f->size = 500;
 		floors.push_back(f);
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		Box* b = new Box();
+		b->position = glm::vec3(0, 500 + i * 400, 200);
+		b->size = 100;
+		boxes.push_back(b);
 	}
 
 	player->gravity = -3.0;
@@ -120,7 +128,7 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() 
+void ofApp::update()
 {
 #ifdef NUITRACK
 	// TRACKER --------------------------------------------
@@ -195,6 +203,7 @@ void ofApp::updatePointcloud() {
 void ofApp::draw()
 {
 	player->falling = isFloor(player->position);
+	player->collision = isBox(player->position);
 
 	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
 	cam.begin();
@@ -202,6 +211,11 @@ void ofApp::draw()
 	player->render();
 
 	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	{
+		(*it)->render();
+	}
+
+	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
 	{
 		(*it)->render();
 	}
@@ -535,6 +549,9 @@ void ofApp::drawPointcloud() {
 void ofApp::keyPressed(int key) {
 	if (key == 's')
 	{
+		if (player->jumping)
+			return;
+
 		player->zVelocity = 30.0;
 		player->jumping = true;
 	}
@@ -542,7 +559,7 @@ void ofApp::keyPressed(int key) {
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-	
+
 }
 
 //--------------------------------------------------------------
@@ -599,7 +616,7 @@ void Player::render()
 {
 	if (position.z <= 15 && falling == 0)
 	{
-		cout << "DEAD" << endl;
+		//cout << "DEAD" << endl;
 		zVelocity += gravity;
 	}
 	else if (position.z > 15 && jumping == 1)
@@ -614,7 +631,12 @@ void Player::render()
 		position.z = 15;
 	}
 
-	cout << jumping << endl;
+	if (collision)
+	{
+		cout << "DEAD BY VOX" << endl;
+		zVelocity += gravity;
+	}
+
 	ofSetColor(0, 255, 0);
 	ofFill();
 	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
@@ -643,6 +665,30 @@ bool ofApp::isFloor(glm::vec3 p_position)
 	{
 		if (p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
 			return true;
+	}
+
+	return false;
+}
+
+Box::Box()
+{
+
+}
+
+void Box::render()
+{
+	ofSetColor(0, 0, 255);
+	ofFill();
+	ofDrawBox(position, size);
+}
+
+bool ofApp::isBox(glm::vec3 p_position)
+{
+	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
+	{
+		if(p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
+			if (p_position.z >= ((*it)->position.z - (*it)->size / 2))
+				return true;
 	}
 
 	return false;

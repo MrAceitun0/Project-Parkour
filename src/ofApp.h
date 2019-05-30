@@ -4,6 +4,9 @@
 
 class Player;
 class Floor;
+class Box;
+
+//#define NUITRACK
 
 #ifdef NUITRACK
 #include <nuitrack/Nuitrack.h>
@@ -58,6 +61,7 @@ public:
 	void gotMessage(ofMessage msg);
 
 	bool isFloor(glm::vec3 p_position);
+	bool isBox(glm::vec3 p_position);
 
 #ifdef NUITRACK		
 	//--------------------------------------------------------------
@@ -87,10 +91,90 @@ public:
 	glm::vec3 floorNormal;
 #endif
 
+	//--------------------------------------------------------------
+				// APP
+	Singleton *singleton; // PUNTUACIÓ jugador
+
+	pantallesJoc pantallaJoc;
+	string pantallaToString();
+
+	void setVariablesIniciPartida(); // endreçat
+	void drawPuntuacio();
+	void drawEnd();
+
+	// CORNER PIN
+	ofxGLWarper warper;
+
+	// BOTONS
+	botoDonut botoStart;
+
+	// GRID
+	grid myGrid;
+
+	// TEMPS DE JOC
+	ofxTimer jocMinutsTimer;
+	float jocMinutsTimerSegonsLeft;
+	int jocMinutsTimerMinuts;
+	int jocMinutsTimerSegons;
+	void drawTemps();
+	ofColor saltingBlue;
+	ofTrueTypeFont	saltingTypo;
+
+	// TEMPS DE PANTALLA FINAL
+	ofxTimer duradaTheEndTimer;
+
+	//--------------------------------------------------------------
+	// PUNTER
+	ofImage punter;
+	float punterWidthMig, punterHeightMig;
+
+	// PECES
+	int comptadorPeces;
+	pecaEmpty peca1;
+	void setupPeca1();
+	void comprobarEstatsPecesEmpty();
+	void actualitzaPuntsEmpty(int & e);
+
+	//--------------------------------------------------------------
+	// DETECCIÓ
+	float relAspectWidth; // detecció
+	float relAspectHeight;
+	float baixaHoTotAvall; // ajust fi amunt-avall
+	float mouHoTotDretaEsq; // ajust fi esquerra-dreta
+
+	bool bshowImagesAndSkeleton = false;
+	bool bshowCamera = false;
+
+	// contorns
+	float tmpX, tmpY;
+	ofVec4f tmpVecBlobPos;
+	ofVec2f warpMousePos;
+
+	//blobs
+	ofVec2f posicionsBlobs[MAX_NUM_BLOBS];
+	int totalBlobsDetected;
+
+	// GUI APP i DETECCIO
+	ofxUICanvas *guia;
+
+	// GUI AJUST BOTONS
+	ofxUICanvas *guib;
+
+	// GUI HELP
+	ofxUICanvas *guih;
+	void guiEvent(ofxUIEventArgs &e); // per a tots els GUIs
+
+	//--------------------------------------------------------------
+	// HELP INFO
+	void toogleDrawInfoGrid();
+	bool bdrawMouseWarped = true;
+
+	//--------------------------------------------------------------
 	ofEasyCam cam;
 
-	Player* player;
+	Player* player = NULL;
 	list<Floor*> floors;
+	list<Box*> boxes;
 };
 
 class Player
@@ -107,6 +191,7 @@ public:
 	void update();
 	bool falling = false;
 	bool jumping = false;
+	bool collision = false;
 };
 
 class Floor
@@ -118,3 +203,11 @@ public:
 	void render();
 };
 
+class Box
+{
+public:
+	Box();
+	glm::vec3 position;
+	float size;
+	void render();
+};
