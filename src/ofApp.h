@@ -100,7 +100,6 @@ public:
 
 	void setVariablesIniciPartida(); // endreçat
 	void drawPuntuacio();
-	void drawEnd();
 
 	// CORNER PIN
 	ofxGLWarper warper;
@@ -175,6 +174,15 @@ public:
 	Player* player = NULL;
 	list<Floor*> floors;
 	list<Box*> boxes;
+
+	void drawMenu();
+	void drawLevel();
+	void drawDeath();
+	void drawEnd();
+
+	ofImage menuImage;
+
+	void restartGame();
 };
 
 class Player

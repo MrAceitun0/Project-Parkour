@@ -10,12 +10,28 @@ using namespace tdv::nuitrack;
 
 using namespace glm;
 
+pantallesJoc stage = START;
+
 //--------------------------------------------------------------
 void ofApp::setup() {
+
+	//ofSetFullscreen(true);
+
+	menuImage.load("menu.jpg");
+	menuImage.update();
+
+	// COLOR JOC
+	saltingBlue = ofColor(0, 192, 255);
+
+	// TYPO
+	ofTrueTypeFont::setGlobalDpi(72);
+	saltingTypo.load("Oswald-Bold.otf", 27, true, true); // temps nivell i normal, kids, pro
+	saltingTypo.setLetterSpacing(1.2);
+
 	ofEnableDepthTest();
 	ofSetVerticalSync(true);
 
-	cam.setGlobalPosition(glm::vec3(0, 0, 0));
+	cam.setGlobalPosition(glm::vec3(0, -100, 90));
 	cam.tilt(80);
 
 	player = new Player();
@@ -33,7 +49,7 @@ void ofApp::setup() {
 		floors.push_back(f);
 	}
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		Box* b = new Box();
 		b->position = glm::vec3(0, 500 + i * 400, 200);
@@ -202,25 +218,23 @@ void ofApp::updatePointcloud() {
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-	player->falling = isFloor(player->position);
-	player->collision = isBox(player->position);
 
-	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
-	cam.begin();
-
-	player->render();
-
-	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	if (stage == START)
 	{
-		(*it)->render();
+		drawMenu();
 	}
-
-	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
+	else if (stage == PLAY)
 	{
-		(*it)->render();
+		drawLevel();
 	}
-
-	cam.end();
+	else if (stage == DEATH)
+	{
+		drawDeath();
+	}
+	else if (stage == END)
+	{
+		drawEnd();
+	}
 
 #ifdef NUITRACK
 	// CAMERA
@@ -549,17 +563,36 @@ void ofApp::drawPointcloud() {
 void ofApp::keyPressed(int key) {
 	if (key == 's')
 	{
-		if (player->jumping)
-			return;
+		if (stage == PLAY)
+		{
+			if (player->jumping)
+				return;
 
-		player->zVelocity = 30.0;
-		player->jumping = true;
+			player->zVelocity = 30.0;
+			player->jumping = true;
+		}
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
-
+	if (key == 's')
+	{
+		if (stage == START)
+		{
+			stage = PLAY;
+		}
+		else if (stage == DEATH)
+		{
+			restartGame();
+			stage = PLAY;
+		}
+		else if (stage == END)
+		{
+			restartGame();
+			stage = PLAY;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -631,12 +664,19 @@ void Player::render()
 		position.z = 15;
 	}
 
-	if (collision)
+	if (collision || position.z < -2000)
 	{
-		cout << "DEAD BY VOX" << endl;
-		zVelocity += gravity;
+		//cout << "DEAD BY VOX" << endl;
+		zVelocity = 0;
+		stage = DEATH;
 	}
 
+	if (position.y >= 6000)
+	{
+		zVelocity = 0;
+		stage = END;
+	}
+		
 	ofSetColor(0, 255, 0);
 	ofFill();
 	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
@@ -692,4 +732,75 @@ bool ofApp::isBox(glm::vec3 p_position)
 	}
 
 	return false;
+}
+
+void ofApp::drawMenu()
+{
+	//menuImage.draw(0, 0, APP_WIDTH, APP_HEIGT);
+
+	string s = "JUMP TO START";
+	ofRectangle rs;
+	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
+	ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
+	ofSetColor(255);
+	saltingTypo.drawString(s, 0, 0);
+	ofPopMatrix();
+}
+
+void ofApp::drawLevel()
+{
+	player->falling = isFloor(player->position);
+	player->collision = isBox(player->position);
+
+	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
+	cam.begin();
+
+	player->render();
+
+	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	{
+		(*it)->render();
+	}
+
+	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
+	{
+		(*it)->render();
+	}
+
+	cam.end();
+}
+
+void ofApp::drawDeath()
+{
+	string s = "YOU DIED - JUMP TO START";
+	ofRectangle rs;
+	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
+	ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
+	ofSetColor(255);
+	saltingTypo.drawString(s, 0, 0);
+	ofPopMatrix();
+}
+
+void ofApp::drawEnd()
+{
+	string s = "YOU WIN! - JUMP TO RESTART";
+	ofRectangle rs;
+	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
+	ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
+	ofSetColor(255);
+	saltingTypo.drawString(s, 0, 0);
+	ofPopMatrix();
+}
+
+void ofApp::restartGame()
+{
+	cam.setGlobalPosition(glm::vec3(0, -400, 90));
+	player->position = glm::vec3(0, 0, 15);
+
+	player->falling = false;
+	player->jumping = false;
+	player->collision = false;
 }
