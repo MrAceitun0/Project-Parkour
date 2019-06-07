@@ -6,7 +6,7 @@ class Player;
 class Floor;
 class Box;
 
-//#define NUITRACK
+#define NUITRACK
 
 #ifdef NUITRACK
 #include <nuitrack/Nuitrack.h>
@@ -200,6 +200,13 @@ public:
 	bool falling = false;
 	bool jumping = false;
 	bool collision = false;
+
+	int myJoints[24];
+
+	void normalJump();
+	void highJump();
+	void throughJump();
+	void slide();
 };
 
 class Floor

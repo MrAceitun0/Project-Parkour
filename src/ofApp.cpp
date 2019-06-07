@@ -385,6 +385,8 @@ void ofApp::drawJoint(Joint &j) {
 		ofVec4f vwarp = warper.fromScreenToWarpCoord(vmap.x, vmap.y, vmap.z);
 		float radius = ofMap(v.z, 50, 7000, 1, 50);
 
+		player->myJoints[j.type] = vmap.y;
+
 		/*
 		// draw joint's center of mass
 		ofPushMatrix();
@@ -647,6 +649,7 @@ Player::Player()
 
 void Player::render()
 {
+	update();
 	if (position.z <= 15 && falling == 0)
 	{
 		//cout << "DEAD" << endl;
@@ -676,15 +679,69 @@ void Player::render()
 		zVelocity = 0;
 		stage = END;
 	}
-		
+
 	ofSetColor(0, 255, 0);
 	ofFill();
 	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
 	ofDrawSphere(position, 15);
+
+	cout << myJoints[23] << endl;  
 }
 
 void Player::update()
 {
+	if (myJoints[23] >= 0.2 && myJoints[19] >= 0.2)
+		normalJump();
+	else if (myJoints[23] >= 0.3 && myJoints[19] >= 0.3 && myJoints[9] >= 0.8 && myJoints[15] >= 0.8)
+		highJump();
+	else if (myJoints[23] >= 0.2 && myJoints[19] >= 0.2 && myJoints[9] <= 0.8 && myJoints[15] <= 0.8)
+		throughJump();
+	else if (myJoints[23] <= 0.2 && myJoints[19] <= 0.2 && myJoints[9] <= 0.2 && myJoints[15] <= 0.2)
+		slide();
+}
+
+void Player::normalJump()
+{
+	if (stage == PLAY)
+	{
+		if (jumping)
+			return;
+
+		zVelocity = 30.0;
+		jumping = true;
+	}
+}
+
+void Player::highJump()
+{
+	if (stage == PLAY)
+	{
+		if (jumping)
+			return;
+
+		zVelocity = 50.0;
+		jumping = true;
+	}
+}
+
+void Player::throughJump()
+{
+	if (stage == PLAY)
+	{
+		if (jumping)
+			return;
+
+		zVelocity = 20.0;
+		jumping = true;
+	}
+}
+
+void Player::slide()
+{
+	if (stage == PLAY)
+	{
+		cout << "Slide\n";
+	}
 }
 
 Floor::Floor()
@@ -726,7 +783,7 @@ bool ofApp::isBox(glm::vec3 p_position)
 {
 	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
 	{
-		if(p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
+		if (p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
 			if (p_position.z >= ((*it)->position.z - (*it)->size / 2))
 				return true;
 	}
