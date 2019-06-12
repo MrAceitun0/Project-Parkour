@@ -17,27 +17,27 @@ pantallesJoc stage = START;
 using namespace glm;
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup() {
 
-    // APP
-    ofSetFullscreen(true);
-    //ofHideCursor();
+	// APP
+	ofSetFullscreen(true);
+	//ofHideCursor();
 
-    // GENRAL
-    ofSetVerticalSync(true);
-    ofSetCircleResolution(300);
-    ofTrueTypeFont::setGlobalDpi(72);
-    singleton = Singleton::getInstance();
+	// GENRAL
+	ofSetVerticalSync(true);
+	ofSetCircleResolution(300);
+	ofTrueTypeFont::setGlobalDpi(72);
+	singleton = Singleton::getInstance();
 
-    // TEMPS DE JOC
-    jocMinutsTimer.setup(3*60*1000, false); // 3 minuts = 3*60*1000 ms
-    jocMinutsTimer.stopTimer();
+	// TEMPS DE JOC
+	jocMinutsTimer.setup(3 * 60 * 1000, false); // 3 minuts = 3*60*1000 ms
+	jocMinutsTimer.stopTimer();
 
-    duradaTheEndTimer.setup(5*1000, false); // 5 segons
-    duradaTheEndTimer.stopTimer();
+	duradaTheEndTimer.setup(5 * 1000, false); // 5 segons
+	duradaTheEndTimer.stopTimer();
 
 	// WARPER
-	warper.setup(0,0, APP_WIDTH,APP_HEIGT);
+	warper.setup(0, 0, APP_WIDTH, APP_HEIGT);
 	warper.load("TrampoLima_CornerPin.xml");
 	warper.enableKeys(true);
 	warper.deactivate();
@@ -47,82 +47,82 @@ void ofApp::setup(){
 	punterWidthMig = punter.getWidth()*0.5;
 	punterHeightMig = punter.getHeight()*0.5;
 
-    // COLOR JOC
-    saltingBlue = ofColor(0,192,255);
+	// COLOR JOC
+	saltingBlue = ofColor(0, 192, 255);
 
-    // TYPO
-    ofTrueTypeFont::setGlobalDpi(72);
-    saltingTypo.load("Oswald-Bold.otf", 27, true, true); // temps nivell i normal, kids, pro
-    saltingTypo.setLetterSpacing(1.2);
+	// TYPO
+	ofTrueTypeFont::setGlobalDpi(72);
+	saltingTypo.load("Oswald-Bold.otf", 27, true, true); // temps nivell i normal, kids, pro
+	saltingTypo.setLetterSpacing(1.2);
 
-    // PECES
-    comptadorPeces = 0;
-    peca1.setup(0, 0, myGrid.returnPosicioOfPeca(0), 50);
-    ofAddListener(pecaEmpty::actualitzaPunts , this, &ofApp::actualitzaPuntsEmpty);
+	// PECES
+	comptadorPeces = 0;
+	peca1.setup(0, 0, myGrid.returnPosicioOfPeca(0), 50);
+	ofAddListener(pecaEmpty::actualitzaPunts, this, &ofApp::actualitzaPuntsEmpty);
 
-    // BOTONS
-    guib = new ofxUICanvas(20, 20, APP_WIDTH*0.3, APP_HEIGT*0.9);
+	// BOTONS
+	guib = new ofxUICanvas(20, 20, APP_WIDTH*0.3, APP_HEIGT*0.9);
 
-    guib->addLabel(":: BOTONS ::", OFX_UI_FONT_MEDIUM);
-    guib->addSpacer();
-    guib->addIntSlider("botoStartX", 0, APP_WIDTH, &botoStart.botoX)->setIncrement(1);
-    guib->addIntSlider("botoStartY", 0, APP_HEIGT, &botoStart.botoY)->setIncrement(1);
+	guib->addLabel(":: BOTONS ::", OFX_UI_FONT_MEDIUM);
+	guib->addSpacer();
+	guib->addIntSlider("botoStartX", 0, APP_WIDTH, &botoStart.botoX)->setIncrement(1);
+	guib->addIntSlider("botoStartY", 0, APP_HEIGT, &botoStart.botoY)->setIncrement(1);
 
-    botoStart.setup(botoStart.botoX,botoStart.botoY, 80, saltingBlue);
+	botoStart.setup(botoStart.botoX, botoStart.botoY, 80, saltingBlue);
 
-    guib->autoSizeToFitWidgets();
-    ofAddListener(guib->newGUIEvent,this,&ofApp::guiEvent);
-    guib->loadSettings("TrampoLima_Botons.xml");
+	guib->autoSizeToFitWidgets();
+	ofAddListener(guib->newGUIEvent, this, &ofApp::guiEvent);
+	guib->loadSettings("TrampoLima_Botons.xml");
 
-    guib->setVisible(false);
+	guib->setVisible(false);
 
-    // GRID
-    myGrid.setup();
-    myGrid.gridActivaExcepteMargesSupInfDretaEsq();
+	// GRID
+	myGrid.setup();
+	myGrid.gridActivaExcepteMargesSupInfDretaEsq();
 
-    // GUI APP
-    guia = new ofxUICanvas(20, 20, APP_WIDTH*0.4, APP_HEIGT*0.9);
+	// GUI APP
+	guia = new ofxUICanvas(20, 20, APP_WIDTH*0.4, APP_HEIGT*0.9);
 
-    guia->addLabel(":: TRAMPOLIMA SETTINGS ::", OFX_UI_FONT_MEDIUM);
-    guia->addSpacer();
+	guia->addLabel(":: TRAMPOLIMA SETTINGS ::", OFX_UI_FONT_MEDIUM);
+	guia->addSpacer();
 
-    guia->addSpacer();
-    guia->addLabelButton("load factory defaults", false);
+	guia->addSpacer();
+	guia->addLabelButton("load factory defaults", false);
 
-    guia->addSpacer();
-    guia->addLabel("GAME IMAGE CORNERS", OFX_UI_FONT_MEDIUM);
-    guia->addLabelButton("reset corners", false);
+	guia->addSpacer();
+	guia->addLabel("GAME IMAGE CORNERS", OFX_UI_FONT_MEDIUM);
+	guia->addLabelButton("reset corners", false);
 
-    guia->addSpacer();
-    guia->addLabel("4 GAME CONTROLLERS POSITION", OFX_UI_FONT_MEDIUM);
-    guia->addSlider("adjustment up-down", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &baixaHoTotAvall);
-    guia->addSlider("adjustment left-right", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &mouHoTotDretaEsq);
+	guia->addSpacer();
+	guia->addLabel("4 GAME CONTROLLERS POSITION", OFX_UI_FONT_MEDIUM);
+	guia->addSlider("adjustment up-down", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &baixaHoTotAvall);
+	guia->addSlider("adjustment left-right", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &mouHoTotDretaEsq);
 
-    guia->autoSizeToFitWidgets();
-    ofAddListener(guia->newGUIEvent,this,&ofApp::guiEvent);
-    guia->loadSettings("TrampoLima_Deteccio.xml");
+	guia->autoSizeToFitWidgets();
+	ofAddListener(guia->newGUIEvent, this, &ofApp::guiEvent);
+	guia->loadSettings("TrampoLima_Deteccio.xml");
 
-    guia->setVisible(false);
+	guia->setVisible(false);
 
-    // HELP
-    guih = new ofxUICanvas(20, 20, APP_WIDTH*0.7, APP_HEIGT*0.9);
+	// HELP
+	guih = new ofxUICanvas(20, 20, APP_WIDTH*0.7, APP_HEIGT*0.9);
 
-    guih->addLabel(":: HELP ::", OFX_UI_FONT_MEDIUM);
-    guih->addSpacer();
-    guih->addFPS();
-    guih->addSpacer();
-    guih->addTextArea("helpText1", "step 1) WARP: press W | w and mouse click and drag to adjust game's image corners");
-    guih->addTextArea("helpText2", "step 2) CAM: press C | c to show and hide camera image");
-    guih->addTextArea("helpText3", "step 3) GAME: press J | j | G | g to adjust game");
-    guih->addTextArea("helpText5", "step 4) BUTTONS & GRID: press B | b to show and hide grid and buttons adjustments");
+	guih->addLabel(":: HELP ::", OFX_UI_FONT_MEDIUM);
+	guih->addSpacer();
+	guih->addFPS();
+	guih->addSpacer();
+	guih->addTextArea("helpText1", "step 1) WARP: press W | w and mouse click and drag to adjust game's image corners");
+	guih->addTextArea("helpText2", "step 2) CAM: press C | c to show and hide camera image");
+	guih->addTextArea("helpText3", "step 3) GAME: press J | j | G | g to adjust game");
+	guih->addTextArea("helpText5", "step 4) BUTTONS & GRID: press B | b to show and hide grid and buttons adjustments");
 
-    guih->autoSizeToFitWidgets();
-    ofAddListener(guih->newGUIEvent,this,&ofApp::guiEvent);
+	guih->autoSizeToFitWidgets();
+	ofAddListener(guih->newGUIEvent, this, &ofApp::guiEvent);
 
-    guih->setVisible(false);
+	guih->setVisible(false);
 
-    // PARTIDA
-    setVariablesIniciPartida();
+	// PARTIDA
+	setVariablesIniciPartida();
 
 #ifdef NUITRACK
 	// REALSENSE
@@ -149,9 +149,9 @@ void ofApp::setup(){
 	tracker->setConfigValue("Realsense2Module.Depth.PostProcessing.SpatialFilter.spatial_alpha", "0.1");
 	tracker->setConfigValue("Realsense2Module.Depth.PostProcessing.SpatialFilter.spatial_delta", "50");
 
-	if(bPlayFile){
-	    string path = ofToDataPath("video.bag", true); // must be absolute path
-	    tracker->setConfigValue("Realsense2Module.FileRecord", path);
+	if (bPlayFile) {
+		string path = ofToDataPath("video.bag", true); // must be absolute path
+		tracker->setConfigValue("Realsense2Module.FileRecord", path);
 	}
 
 	tracker->setConfigValue("Segmantation.MAX_DISTANCE", "10000");
@@ -176,7 +176,7 @@ void ofApp::setup(){
 			//Live feed = BGR
 			pix.setFromPixels(colorDataPtr, rgbFrameSize.x, rgbFrameSize.y, OF_PIXELS_BGR);
 		}
-		else{
+		else {
 			// BAG file = RGB
 			pix.setFromPixels(colorDataPtr, rgbFrameSize.x, rgbFrameSize.y, OF_PIXELS_RGB);
 		}
@@ -237,79 +237,79 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::setVariablesIniciPartida(){
-    // APP
-    singleton->setPuntuacioJugador(0);
+void ofApp::setVariablesIniciPartida() {
+	// APP
+	singleton->setPuntuacioJugador(0);
 
-    // BOTONS
-    botoStart.botoSeleccionat = false;
+	// BOTONS
+	botoStart.botoSeleccionat = false;
 
-    // TEMPS DE JOC
-    jocMinutsTimer.reset();
-    jocMinutsTimer.stopTimer();
-    duradaTheEndTimer.reset();
-    duradaTheEndTimer.stopTimer();
+	// TEMPS DE JOC
+	jocMinutsTimer.reset();
+	jocMinutsTimer.stopTimer();
+	duradaTheEndTimer.reset();
+	duradaTheEndTimer.stopTimer();
 
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
 #ifdef NUITRACK
-  // TRACKER --------------------------------------------
-  tracker->poll();
-  updatePointcloud();
+	// TRACKER --------------------------------------------
+	tracker->poll();
+	updatePointcloud();
 
-  totalBlobsDetected = 0; // s'actualitza dins el updateJoint
-  for(int i=0; i<skeletons.size(); i++) {
-    auto s = skeletons[i];
-    auto joints = s.joints;
-    for (int n=0; n<joints.size(); n++) {
-      auto j = joints[n];
-      updateJoint(j);
-    }
-  }
+	totalBlobsDetected = 0; // s'actualitza dins el updateJoint
+	for (int i = 0; i < skeletons.size(); i++) {
+		auto s = skeletons[i];
+		auto joints = s.joints;
+		for (int n = 0; n < joints.size(); n++) {
+			auto j = joints[n];
+			updateJoint(j);
+		}
+	}
 #endif
 
-  for(int i=0; i<totalBlobsDetected; i++) {
-    posicionsBlobs[i].x = posicionsBlobs[i].x + mouHoTotDretaEsq;
-    posicionsBlobs[i].y = posicionsBlobs[i].y + baixaHoTotAvall;
-  }
+	for (int i = 0; i < totalBlobsDetected; i++) {
+		posicionsBlobs[i].x = posicionsBlobs[i].x + mouHoTotDretaEsq;
+		posicionsBlobs[i].y = posicionsBlobs[i].y + baixaHoTotAvall;
+	}
 
-  // PANTALLES ------------------------------------------
-  if(pantallaJoc == START){
-      botoStart.update(totalBlobsDetected, posicionsBlobs);
-      botoStart.updatem(warpMousePos);
+	// PANTALLES ------------------------------------------
+	if (pantallaJoc == START) {
+		botoStart.update(totalBlobsDetected, posicionsBlobs);
+		botoStart.updatem(warpMousePos);
 
-      if(botoStart.botoSeleccionat == true){ // CANVI A pantallaJoc = PLAY;
-          pantallaJoc = PLAY;
-          jocMinutsTimer.startTimer();
+		if (botoStart.botoSeleccionat == true) { // CANVI A pantallaJoc = PLAY;
+			pantallaJoc = PLAY;
+			jocMinutsTimer.startTimer();
 
-          setupPeca1(); // la Ãºnica peÃ§a d'aquest joc
-      }
-  }
-  else if(pantallaJoc == PLAY){
-      peca1.updatem(warpMousePos);
-      peca1.update(totalBlobsDetected, posicionsBlobs);
-      comprobarEstatsPecesEmpty();
-  }
-  else if(pantallaJoc == END){
-      if(duradaTheEndTimer.isTimerFinished()){
-          setVariablesIniciPartida();
-          pantallaJoc = START;
-      }
-  }
+			setupPeca1(); // la única peça d'aquest joc
+		}
+	}
+	else if (pantallaJoc == PLAY) {
+		peca1.updatem(warpMousePos);
+		peca1.update(totalBlobsDetected, posicionsBlobs);
+		comprobarEstatsPecesEmpty();
+	}
+	else if (pantallaJoc == END) {
+		if (duradaTheEndTimer.isTimerFinished()) {
+			setVariablesIniciPartida();
+			pantallaJoc = START;
+		}
+	}
 
-  // TEMPS ----------------------------------------------
-  jocMinutsTimerSegonsLeft = jocMinutsTimer.getTimeLeftInSeconds();
-  jocMinutsTimerMinuts = (int)jocMinutsTimerSegonsLeft/60;
-  jocMinutsTimerSegons = jocMinutsTimerSegonsLeft - jocMinutsTimerMinuts*60;
+	// TEMPS ----------------------------------------------
+	jocMinutsTimerSegonsLeft = jocMinutsTimer.getTimeLeftInSeconds();
+	jocMinutsTimerMinuts = (int)jocMinutsTimerSegonsLeft / 60;
+	jocMinutsTimerSegons = jocMinutsTimerSegonsLeft - jocMinutsTimerMinuts * 60;
 
-  if(jocMinutsTimer.isTimerFinished()){
-      pantallaJoc = END;
-      jocMinutsTimer.reset();
-      jocMinutsTimer.stopTimer();
-      duradaTheEndTimer.startTimer();
-  }
+	if (jocMinutsTimer.isTimerFinished()) {
+		pantallaJoc = END;
+		jocMinutsTimer.reset();
+		jocMinutsTimer.stopTimer();
+		duradaTheEndTimer.startTimer();
+	}
 }
 
 #ifdef NUITRACK
@@ -322,34 +322,34 @@ void ofApp::updatePointcloud() {
 		int row = dframe->getRows();
 		int col = dframe->getCols();
 		int skip = 4;	// downsampling level, 1 = max
-		int size = ((float)row/skip) * ceil((float)col / skip);
+		int size = ((float)row / skip) * ceil((float)col / skip);
 
 		// allocate vertices and colors only once
 		if (pc.getVertices().size() == 0) {
 			pc.clear();
 
 			vector<glm::vec3> p;
-			p.assign(size, glm::vec3(0,0,0));
+			p.assign(size, glm::vec3(0, 0, 0));
 			pc.addVertices(p);
 
 			vector<ofFloatColor> c;
-			c.assign(size, ofFloatColor(0,0,0,0.9));
+			c.assign(size, ofFloatColor(0, 0, 0, 0.9));
 			pc.addColors(c);
 		}
 
 		const unsigned short * data = dframe->getData();
 
 #ifdef OPEN_MP_TEST
-		#pragma omp parallel for num_threads(4)
+#pragma omp parallel for num_threads(4)
 #endif
 		for (int y = 0; y < row; y += skip) {
 			for (int x = 0; x < col; x += skip) {
 				int index = y * col + x;
-				int skippedIndex = (y/skip) * (col/skip) + (x/skip);
+				int skippedIndex = (y / skip) * (col / skip) + (x / skip);
 				unsigned short d = data[index];
 				Vector3 v = dtracker->convertProjToRealCoords(x, y, d);
 				pc.setVertex(skippedIndex, glm::vec3(v.x, v.y, v.z)*0.001);
-				if (v.y>-900) {
+				if (v.y > -900) {
 					float g = ofMap(d, 0, 5000, 0.1, 1.0, true);
 					pc.setColor(skippedIndex, ofFloatColor(g, g, 0, 0.9)); // groc
 				}
@@ -358,61 +358,61 @@ void ofApp::updatePointcloud() {
 				}
 			}
 		}
-		
+
 		bNeedPointcloudUpdate = false;
 	}
 }
 #endif
 
 //--------------------------------------------------------------
-void ofApp::draw(){
-    // WARP begin
-    warper.begin();
-    warper.draw();
+void ofApp::draw() {
+	// WARP begin
+	warper.begin();
+	warper.draw();
 
-    // APP
-    ofBackground(0);
-    ofSetColor(255);
-    ofSetWindowTitle("TrampoLima running at " + ofToString((int)ofGetFrameRate()) + " frames per second");
+	// APP
+	ofBackground(0);
+	ofSetColor(255);
+	ofSetWindowTitle("TrampoLima running at " + ofToString((int)ofGetFrameRate()) + " frames per second");
 
-    // FONS
+	// FONS
 	/*
-    ofSetColor(155);
-    ofFill();
-    ofDrawRectangle(0,0, APP_WIDTH, APP_HEIGT);
+	ofSetColor(155);
+	ofFill();
+	ofDrawRectangle(0,0, APP_WIDTH, APP_HEIGT);
 	*/
 
-    // PANTALLES --------------------------------------------------------------------------
+	// PANTALLES --------------------------------------------------------------------------
 	/*
-    if(pantallaJoc == START){
-        drawTemps();
-        drawPuntuacio();
-        botoStart.draw();
-    }
-    else if(pantallaJoc == PLAY){
-        drawTemps();
-        drawPuntuacio();
-        peca1.draw();
-    }
-    else if(pantallaJoc == END){
-        drawEnd();
-    }
+	if(pantallaJoc == START){
+		drawTemps();
+		drawPuntuacio();
+		botoStart.draw();
+	}
+	else if(pantallaJoc == PLAY){
+		drawTemps();
+		drawPuntuacio();
+		peca1.draw();
+	}
+	else if(pantallaJoc == END){
+		drawEnd();
+	}
 	*/
-    // HELP ----------------------------------------------------
-    // GRID
-    myGrid.draw();
-    if(bdrawMouseWarped){
-      ofSetColor(255,255,0);
-      ofDrawCircle(warpMousePos.x, warpMousePos.y, 5,5);
-    }
-    //ofSetColor(255,255,0);
-    //ofDrawBitmapString("ESTAT: " + pantallaToString(), 20,20);
+	// HELP ----------------------------------------------------
+	// GRID
+	myGrid.draw();
+	if (bdrawMouseWarped) {
+		ofSetColor(255, 255, 0);
+		ofDrawCircle(warpMousePos.x, warpMousePos.y, 5, 5);
+	}
+	//ofSetColor(255,255,0);
+	//ofDrawBitmapString("ESTAT: " + pantallaToString(), 20,20);
 
-    // PUNTERS ----------------------------------------------------
-    ofSetColor(255);
-    for(int i = 0; i < totalBlobsDetected; i++){
-        punter.draw(posicionsBlobs[i].x-punterWidthMig, posicionsBlobs[i].y-punterHeightMig);
-    }
+	// PUNTERS ----------------------------------------------------
+	ofSetColor(255);
+	for (int i = 0; i < totalBlobsDetected; i++) {
+		punter.draw(posicionsBlobs[i].x - punterWidthMig, posicionsBlobs[i].y - punterHeightMig);
+	}
 
 	if (stage == START)
 	{
@@ -432,227 +432,227 @@ void ofApp::draw(){
 	}
 
 #ifdef NUITRACK
-    // CAMERA
-    if(bshowCamera){
-        ofSetColor(255);
-        if (rgbTex.isAllocated()) {
-          rgbTex.draw(0,0,APP_WIDTH,APP_HEIGT);
-        }
-    }
+	// CAMERA
+	if (bshowCamera) {
+		ofSetColor(255);
+		if (rgbTex.isAllocated()) {
+			rgbTex.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		}
+	}
 #endif
 
-    // WARP end
-    warper.end();
+	// WARP end
+	warper.end();
 
 #ifdef NUITRACK
-    // INFO ------------------------------------------------------------------------
-    // CAMERES & STICKMAN & PRINTS
-    if(bshowImagesAndSkeleton){
-        float camWidthPorc = rgbFrameSize.x*0.25;
-        float camHeightPorc = rgbFrameSize.y*0.25;
-        ofSetColor(255);
-        if (rgbTex.isAllocated()) {
-          rgbTex.draw(400,20, camWidthPorc,camHeightPorc);
-        }
-        if (depthTex.isAllocated()) {
-          depthTex.draw(400+camWidthPorc+20,20, camWidthPorc,camHeightPorc);
-        }
+	// INFO ------------------------------------------------------------------------
+	// CAMERES & STICKMAN & PRINTS
+	if (bshowImagesAndSkeleton) {
+		float camWidthPorc = rgbFrameSize.x*0.25;
+		float camHeightPorc = rgbFrameSize.y*0.25;
+		ofSetColor(255);
+		if (rgbTex.isAllocated()) {
+			rgbTex.draw(400, 20, camWidthPorc, camHeightPorc);
+		}
+		if (depthTex.isAllocated()) {
+			depthTex.draw(400 + camWidthPorc + 20, 20, camWidthPorc, camHeightPorc);
+		}
 
-        ofSetHexColor(0xffffff);
-        ofDrawBitmapString("camera image", 400,10);
-        ofDrawBitmapString("depth texture", 400+camWidthPorc+20,10);
+		ofSetHexColor(0xffffff);
+		ofDrawBitmapString("camera image", 400, 10);
+		ofDrawBitmapString("depth texture", 400 + camWidthPorc + 20, 10);
 
-        //drawPointcloud();
-        ofDrawBitmapString(ofToString(skeletons.size()) + " skeletons", 400,20+camHeightPorc+20);
-        for (int i = 0; i < skeletons.size(); i++) {
-          auto s = skeletons[i];
-          drawSkeleton(s);
-        }
-        drawUsers(); // // draw user's center of mass
+		//drawPointcloud();
+		ofDrawBitmapString(ofToString(skeletons.size()) + " skeletons", 400, 20 + camHeightPorc + 20);
+		for (int i = 0; i < skeletons.size(); i++) {
+			auto s = skeletons[i];
+			drawSkeleton(s);
+		}
+		drawUsers(); // // draw user's center of mass
 
-        ofSetColor(255, 255, 0);
-        ofDrawBitmapString("RGBFRAME SIZE " + ofToString(rgbFrameSize.x) + ",  " + ofToString(rgbFrameSize.y), 20, APP_HEIGT_MEITAT-20);
-    }
+		ofSetColor(255, 255, 0);
+		ofDrawBitmapString("RGBFRAME SIZE " + ofToString(rgbFrameSize.x) + ",  " + ofToString(rgbFrameSize.y), 20, APP_HEIGT_MEITAT - 20);
+	}
 #endif
 }
 
 #ifdef NUITRACK
 void ofApp::drawUsers() {
-  for (auto & u : users) {
-    int uid = u.id;
+	for (auto & u : users) {
+		int uid = u.id;
 
-    // REAL -----
-    const Vector3 & v = u.real; // real pos is in mm
-    ofVec3f vmap = ofVec3f(0, 0, 0);
-    vmap.x = ofMap(v.x, -rgbFrameSize.x*0.5,rgbFrameSize.x*0.5, 0,APP_WIDTH);
-    vmap.y = ofMap(v.y, rgbFrameSize.y*0.5,-rgbFrameSize.y*0.5, 0,APP_HEIGT);
-    vmap.z = 0;
-    ofVec4f vwarp = warper.fromScreenToWarpCoord(vmap.x,vmap.y,vmap.z);
-    float radius = ofMap(v.z, 50,7000, 1,20);
+		// REAL -----
+		const Vector3 & v = u.real; // real pos is in mm
+		ofVec3f vmap = ofVec3f(0, 0, 0);
+		vmap.x = ofMap(v.x, -rgbFrameSize.x*0.5, rgbFrameSize.x*0.5, 0, APP_WIDTH);
+		vmap.y = ofMap(v.y, rgbFrameSize.y*0.5, -rgbFrameSize.y*0.5, 0, APP_HEIGT);
+		vmap.z = 0;
+		ofVec4f vwarp = warper.fromScreenToWarpCoord(vmap.x, vmap.y, vmap.z);
+		float radius = ofMap(v.z, 50, 7000, 1, 20);
 
-    ofSetColor(255, 255, 0);
-    string info = "CENTER OF MASS " + ofToString(static_cast<int>(v.x)) + ", " + ofToString(static_cast<int>(v.y));
-    info += ", " + ofToString(static_cast<int>(v.z));
-    ofDrawBitmapString(info, 20, APP_HEIGT_MEITAT);
+		ofSetColor(255, 255, 0);
+		string info = "CENTER OF MASS " + ofToString(static_cast<int>(v.x)) + ", " + ofToString(static_cast<int>(v.y));
+		info += ", " + ofToString(static_cast<int>(v.z));
+		ofDrawBitmapString(info, 20, APP_HEIGT_MEITAT);
 
-    /*
-    // draw user's center of mass
-    ofPushMatrix();
-    ofTranslate(vmap.x, vmap.y, vmap.z);
-    ofFill();
-    ofSetColor(255, 255, 0); // yellow
-    ofDrawSphere(0,0,0,radius);
-    ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
-    ofPopMatrix();
+		/*
+		// draw user's center of mass
+		ofPushMatrix();
+		ofTranslate(vmap.x, vmap.y, vmap.z);
+		ofFill();
+		ofSetColor(255, 255, 0); // yellow
+		ofDrawSphere(0,0,0,radius);
+		ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
+		ofPopMatrix();
 
-    // draw user's center of mass warped
-    ofPushMatrix();
-    ofTranslate(vwarp.x, vwarp.y, vwarp.z);
-    ofFill();
-    ofSetColor(0, 255, 255); // cian
-    ofDrawSphere(0,0,0,radius);
-    ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
-    ofPopMatrix();
-    */
+		// draw user's center of mass warped
+		ofPushMatrix();
+		ofTranslate(vwarp.x, vwarp.y, vwarp.z);
+		ofFill();
+		ofSetColor(0, 255, 255); // cian
+		ofDrawSphere(0,0,0,radius);
+		ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
+		ofPopMatrix();
+		*/
 
-    // PROJ -----
-    const Vector3 & p = u.proj;
-    ofVec3f pmap = ofVec3f(0, 0, 0);
-    pmap.x = ofMap(p.x, 0.0,1.0, 0,APP_WIDTH);
-    pmap.y = ofMap(p.y, 0.0,1.0, 0,APP_HEIGT);
-    pmap.z = 0;
-    ofVec4f pwarp = warper.fromScreenToWarpCoord(pmap.x,pmap.y,pmap.z);
-    BoundingBox bb = u.box;
+		// PROJ -----
+		const Vector3 & p = u.proj;
+		ofVec3f pmap = ofVec3f(0, 0, 0);
+		pmap.x = ofMap(p.x, 0.0, 1.0, 0, APP_WIDTH);
+		pmap.y = ofMap(p.y, 0.0, 1.0, 0, APP_HEIGT);
+		pmap.z = 0;
+		ofVec4f pwarp = warper.fromScreenToWarpCoord(pmap.x, pmap.y, pmap.z);
+		BoundingBox bb = u.box;
 
-    ofSetColor(255, 0, 255);
-    info = "CENTER OF MASS " + ofToString(p.x) + ", " + ofToString(p.y);
-    info += ", " + ofToString(p.z);
-    ofDrawBitmapString(info, 20, APP_HEIGT_MEITAT+20);
+		ofSetColor(255, 0, 255);
+		info = "CENTER OF MASS " + ofToString(p.x) + ", " + ofToString(p.y);
+		info += ", " + ofToString(p.z);
+		ofDrawBitmapString(info, 20, APP_HEIGT_MEITAT + 20);
 
-    /*
-    // draw user's center of mass
-    ofPushMatrix();
-    ofTranslate(pmap.x, pmap.y, pmap.z);
-    ofFill();
-    ofSetColor(255, 0, 255); // magenta
-    ofDrawSphere(0,0,0,radius);
-    ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
-    ofNoFill();
-    float bbample = (bb.right - bb.left)*APP_WIDTH;
-    float bbalt = (bb.bottom- bb.top)*APP_HEIGT;
-    ofDrawRectangle(bb.top, bb.left, bbample, bbalt);
-    ofPopMatrix();
-    */
+		/*
+		// draw user's center of mass
+		ofPushMatrix();
+		ofTranslate(pmap.x, pmap.y, pmap.z);
+		ofFill();
+		ofSetColor(255, 0, 255); // magenta
+		ofDrawSphere(0,0,0,radius);
+		ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
+		ofNoFill();
+		float bbample = (bb.right - bb.left)*APP_WIDTH;
+		float bbalt = (bb.bottom- bb.top)*APP_HEIGT;
+		ofDrawRectangle(bb.top, bb.left, bbample, bbalt);
+		ofPopMatrix();
+		*/
 
-    // draw user's center of mass
-    ofPushMatrix();
-    ofTranslate(pwarp.x, pwarp.y, pwarp.z);
-    ofFill();
-    ofSetColor(255, 128, 0); // taronja
-    ofDrawSphere(0,0,0,radius);
-    ofDrawBitmapString("USER " + ofToString(uid), radius+5, radius+5);
-    ofPopMatrix();
-  }
+		// draw user's center of mass
+		ofPushMatrix();
+		ofTranslate(pwarp.x, pwarp.y, pwarp.z);
+		ofFill();
+		ofSetColor(255, 128, 0); // taronja
+		ofDrawSphere(0, 0, 0, radius);
+		ofDrawBitmapString("USER " + ofToString(uid), radius + 5, radius + 5);
+		ofPopMatrix();
+	}
 }
 
 void ofApp::drawSkeleton(Skeleton &s) {
-  auto joints = s.joints;
-  for (auto j : joints) {
-          drawJoint(j);
-  }
-  drawBones(joints);
+	auto joints = s.joints;
+	for (auto j : joints) {
+		drawJoint(j);
+	}
+	drawBones(joints);
 }
 
 void ofApp::drawJoint(Joint &j) {
-    if (j.type == JOINT_NONE) {
-            return;
-    }
-    if (j.confidence < 0.15) {
-            return;
-    }
+	if (j.type == JOINT_NONE) {
+		return;
+	}
+	if (j.confidence < 0.15) {
+		return;
+	}
 
-    // real pos is in mm, lets convert to m
-    if(j.type==JOINT_HEAD||j.type==JOINT_LEFT_HAND||j.type==JOINT_RIGHT_HAND||
-       j.type==JOINT_LEFT_ANKLE||j.type==JOINT_RIGHT_ANKLE){
-        // REAL  -----
-        const Vector3 & v = j.real;
-        ofVec3f vmap = ofVec3f(0, 0, 0);
-        vmap.x = ofMap(v.x, -rgbFrameSize.x*0.5,rgbFrameSize.x*0.5, 0,APP_WIDTH);
-        vmap.y = ofMap(v.y, rgbFrameSize.y*0.5,-rgbFrameSize.y*0.5, 0,APP_HEIGT);
-        vmap.z = 0;
-        ofVec4f vwarp = warper.fromScreenToWarpCoord(vmap.x,vmap.y,vmap.z);
-        float radius = ofMap(v.z, 50,7000, 1,50);
+	// real pos is in mm, lets convert to m
+	if (j.type == JOINT_HEAD || j.type == JOINT_LEFT_HAND || j.type == JOINT_RIGHT_HAND ||
+		j.type == JOINT_LEFT_ANKLE || j.type == JOINT_RIGHT_ANKLE) {
+		// REAL  -----
+		const Vector3 & v = j.real;
+		ofVec3f vmap = ofVec3f(0, 0, 0);
+		vmap.x = ofMap(v.x, -rgbFrameSize.x*0.5, rgbFrameSize.x*0.5, 0, APP_WIDTH);
+		vmap.y = ofMap(v.y, rgbFrameSize.y*0.5, -rgbFrameSize.y*0.5, 0, APP_HEIGT);
+		vmap.z = 0;
+		ofVec4f vwarp = warper.fromScreenToWarpCoord(vmap.x, vmap.y, vmap.z);
+		float radius = ofMap(v.z, 50, 7000, 1, 50);
 
-        /*
-        // draw joint's center of mass
-        ofPushMatrix();
-        ofTranslate(vmap.x, vmap.y, vmap.z);
-        ofFill();
-        ofSetColor(255, 255, 0); // yellow
-        ofDrawBox(0,0,0,radius);
-        ofPopMatrix();
+		/*
+		// draw joint's center of mass
+		ofPushMatrix();
+		ofTranslate(vmap.x, vmap.y, vmap.z);
+		ofFill();
+		ofSetColor(255, 255, 0); // yellow
+		ofDrawBox(0,0,0,radius);
+		ofPopMatrix();
 
-        // draw joint's center of mass warped
-        ofPushMatrix();
-        ofTranslate(vwarp.x, vwarp.y, vwarp.z);
-        ofFill();
-        ofSetColor(0, 255, 255); // cian
-        ofDrawBox(0,0,0,radius);
-        ofPopMatrix();
-        */
+		// draw joint's center of mass warped
+		ofPushMatrix();
+		ofTranslate(vwarp.x, vwarp.y, vwarp.z);
+		ofFill();
+		ofSetColor(0, 255, 255); // cian
+		ofDrawBox(0,0,0,radius);
+		ofPopMatrix();
+		*/
 
-        // PROJ -----
-        const Vector3 & p = j.proj;
-        ofVec3f pmap = ofVec3f(0, 0, 0);
-        pmap.x = ofMap(p.x, 0.0,1.0, 0,APP_WIDTH);
-        pmap.y = ofMap(p.y, 0.0,1.0, 0,APP_HEIGT);
-        pmap.z = 0;
-        pmap.x = APP_WIDTH-pmap.x; // TODO posr en un control aquest invertit per la pos de camera
-        ofVec4f pwarp = warper.fromScreenToWarpCoord(pmap.x,pmap.y,pmap.z);
+		// PROJ -----
+		const Vector3 & p = j.proj;
+		ofVec3f pmap = ofVec3f(0, 0, 0);
+		pmap.x = ofMap(p.x, 0.0, 1.0, 0, APP_WIDTH);
+		pmap.y = ofMap(p.y, 0.0, 1.0, 0, APP_HEIGT);
+		pmap.z = 0;
+		pmap.x = APP_WIDTH - pmap.x; // TODO posr en un control aquest invertit per la pos de camera
+		ofVec4f pwarp = warper.fromScreenToWarpCoord(pmap.x, pmap.y, pmap.z);
 
-        /*
-        // draw user's center of mass
-        ofPushMatrix();
-        ofTranslate(pmap.x, pmap.y, pmap.z);
-        ofFill();
-        ofSetColor(255, 0, 255); // magenta
-        ofDrawBox(0,0,0,radius);
-        ofDrawBitmapString(ofToString(pmap.x) + ", " + ofToString(pmap.y), 20,20);
-        ofPopMatrix();
-        */
+		/*
+		// draw user's center of mass
+		ofPushMatrix();
+		ofTranslate(pmap.x, pmap.y, pmap.z);
+		ofFill();
+		ofSetColor(255, 0, 255); // magenta
+		ofDrawBox(0,0,0,radius);
+		ofDrawBitmapString(ofToString(pmap.x) + ", " + ofToString(pmap.y), 20,20);
+		ofPopMatrix();
+		*/
 
-        // draw user's center of mass
-        ofPushMatrix();
-        ofTranslate(pwarp.x, pwarp.y, pwarp.z);
-        ofFill();
-        ofSetColor(255, 128, 0); // taronja
-        ofDrawBox(0,0,0,radius);
-        ofDrawBitmapString(ofToString(pwarp.x) + ", " + ofToString(pwarp.y), 20,20);
-        ofPopMatrix();
-    }
+		// draw user's center of mass
+		ofPushMatrix();
+		ofTranslate(pwarp.x, pwarp.y, pwarp.z);
+		ofFill();
+		ofSetColor(255, 128, 0); // taronja
+		ofDrawBox(0, 0, 0, radius);
+		ofDrawBitmapString(ofToString(pwarp.x) + ", " + ofToString(pwarp.y), 20, 20);
+		ofPopMatrix();
+	}
 }
 
-void ofApp::updateJoint(Joint &j){
-  if (j.type == JOINT_NONE) {
-          return;
-  }
-  if (j.confidence < 0.15) {
-          return;
-  }
+void ofApp::updateJoint(Joint &j) {
+	if (j.type == JOINT_NONE) {
+		return;
+	}
+	if (j.confidence < 0.15) {
+		return;
+	}
 
-  if(j.type==JOINT_HEAD||j.type==JOINT_LEFT_HAND||j.type==JOINT_RIGHT_HAND||j.type==JOINT_LEFT_ANKLE||j.type==JOINT_RIGHT_ANKLE){
-      // PROJ -----
-      const Vector3 & p = j.proj;
-      ofVec3f pmap = ofVec3f(0, 0, 0);
-      pmap.x = ofMap(p.x, 0.0,1.0, 0,APP_WIDTH);
-      pmap.y = ofMap(p.y, 0.0,1.0, 0,APP_HEIGT);
-      pmap.z = 0;
-      pmap.x = APP_WIDTH-pmap.x; // TODO posr en un control aquest invertit per la pos de camera
-	  myJoints[j.type] = pmap.z;
-      posicionsBlobs[totalBlobsDetected].x = pmap.x;
-      posicionsBlobs[totalBlobsDetected].y = pmap.y;
-      totalBlobsDetected++;
-  }
+	if (j.type == JOINT_HEAD || j.type == JOINT_LEFT_HAND || j.type == JOINT_RIGHT_HAND || j.type == JOINT_LEFT_ANKLE || j.type == JOINT_RIGHT_ANKLE) {
+		// PROJ -----
+		const Vector3 & p = j.proj;
+		ofVec3f pmap = ofVec3f(0, 0, 0);
+		pmap.x = ofMap(p.x, 0.0, 1.0, 0, APP_WIDTH);
+		pmap.y = ofMap(p.y, 0.0, 1.0, 0, APP_HEIGT);
+		pmap.z = 0;
+		pmap.x = APP_WIDTH - pmap.x; // TODO posr en un control aquest invertit per la pos de camera
+		myJoints[j.type] = pmap.z;
+		posicionsBlobs[totalBlobsDetected].x = pmap.x;
+		posicionsBlobs[totalBlobsDetected].y = pmap.y;
+		totalBlobsDetected++;
+	}
 }
 
 void ofApp::drawBones(vector<Joint> joints) {
@@ -724,16 +724,16 @@ void ofApp::drawBones(vector<Joint> joints) {
 
 		ofVec3f p1map = ofVec3f(0, 0, 0);
 		ofVec3f p2map = ofVec3f(0, 0, 0);
-		p1map.x = ofMap(p1.x, 0.0,1.0, 0,APP_WIDTH);
-		p1map.y = ofMap(p1.y, 0.0,1.0, 0,APP_HEIGT);
+		p1map.x = ofMap(p1.x, 0.0, 1.0, 0, APP_WIDTH);
+		p1map.y = ofMap(p1.y, 0.0, 1.0, 0, APP_HEIGT);
 		p1map.z = 0;
-		p2map.x = ofMap(p2.x, 0.0,1.0, 0,APP_WIDTH);
-		p2map.y = ofMap(p2.y, 0.0,1.0, 0,APP_HEIGT);
+		p2map.x = ofMap(p2.x, 0.0, 1.0, 0, APP_WIDTH);
+		p2map.y = ofMap(p2.y, 0.0, 1.0, 0, APP_HEIGT);
 		p2map.z = 0;
-		p1map.x = APP_WIDTH-p1map.x; // TODO posr en un control aquest invertit per la pos de camera
-		p2map.x = APP_WIDTH-p2map.x; // TODO posr en un control aquest invertit per la pos de camera
-		ofVec4f p1warp = warper.fromScreenToWarpCoord(p1map.x,p1map.y,p1map.z);
-		ofVec4f p2warp = warper.fromScreenToWarpCoord(p2map.x,p2map.y,p2map.z);
+		p1map.x = APP_WIDTH - p1map.x; // TODO posr en un control aquest invertit per la pos de camera
+		p2map.x = APP_WIDTH - p2map.x; // TODO posr en un control aquest invertit per la pos de camera
+		ofVec4f p1warp = warper.fromScreenToWarpCoord(p1map.x, p1map.y, p1map.z);
+		ofVec4f p2warp = warper.fromScreenToWarpCoord(p2map.x, p2map.y, p2map.z);
 
 		/*
 		// draw joint's
@@ -744,120 +744,125 @@ void ofApp::drawBones(vector<Joint> joints) {
 
 		// draw joint's
 		ofSetColor(255, 128, 0); // taronja
-		ofDrawLine(p1warp.x,p1warp.y,p2warp.x,p2warp.y);
+		ofDrawLine(p1warp.x, p1warp.y, p2warp.x, p2warp.y);
 
 	}
 
 }
 
 void ofApp::drawPointcloud() {
-  ofPushMatrix();
-  glPointSize(1);
-  pc.draw();
-  ofPopMatrix();
+	ofPushMatrix();
+	glPointSize(1);
+	pc.draw();
+	ofPopMatrix();
 }
 #endif
 
 //--------------------------------------------------------------
-void ofApp::exit(){
-  warper.save("TrampoLima_CornerPin.xml");
-  guia->saveSettings("TrampoLima_Deteccio.xml");
-  delete guia;
-  guib->saveSettings("TrampoLima_Botons.xml");
-  delete guib;
+void ofApp::exit() {
+	warper.save("TrampoLima_CornerPin.xml");
+	guia->saveSettings("TrampoLima_Deteccio.xml");
+	delete guia;
+	guib->saveSettings("TrampoLima_Botons.xml");
+	delete guib;
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-  // H + F1 + a : help, aide, ayuda, ajuda
-  // w : corner pin
-  // J ajusta joc
-  // G : grid -> per development (cal descomentar a baix)
-  // D ajusta botons -> per development (cal descomentar a baix)
+void ofApp::keyPressed(int key) {
+	// H + F1 + a : help, aide, ayuda, ajuda
+	// w : corner pin
+	// J ajusta joc
+	// G : grid -> per development (cal descomentar a baix)
+	// D ajusta botons -> per development (cal descomentar a baix)
 
-  if((key == 'h')||(key == 'H')||(key == 'a')||(key == 'A')||(key == OF_KEY_F1)){
-      guia->setVisible(false);
-      guib->setVisible(false);
-      warper.deactivate();
-      bshowImagesAndSkeleton = false;
-      guih->toggleVisible();
-  }
-  else if((key == 'c')||(key == 'C')){
-      guia->setVisible(false);
-      guib->setVisible(false);
-      guih->setVisible(false);
-      bshowImagesAndSkeleton = false;
-      warper.deactivate();
-      bshowCamera = !bshowCamera;
-  }
-  else if((key == 'w')||(key == 'W')){
-      guia->setVisible(false);
-      guib->setVisible(false);
-      guih->setVisible(false);
-      bshowImagesAndSkeleton = false;
-      warper.toggleActive();
-  }
-  else if((key == 'j')||(key == 'J')||(key == 'g')||(key == 'G')){
-      guib->setVisible(false);
-      guih->setVisible(false);
-      warper.deactivate();
-      guia->toggleVisible();
-      bshowImagesAndSkeleton = !bshowImagesAndSkeleton;
-  }
-  else if((key == 'f')||(key == 'F')){
-      ofToggleFullscreen();
-  }
-  else if((key == 'b')||(key == 'B')){
-      toogleDrawInfoGrid();
-      guia->setVisible(false);
-      guih->setVisible(false);
-      warper.deactivate();
-      bshowImagesAndSkeleton = false;
-      guib->toggleVisible();
-  }
-  else if((key == 'r')||(key == 'R')){
-      // reset corners
-      warper.setCorner(ofxGLWarper::TOP_LEFT, 0,0);
-      warper.setCorner(ofxGLWarper::TOP_RIGHT, APP_WIDTH,0);
-      warper.setCorner(ofxGLWarper::BOTTOM_RIGHT, APP_WIDTH,APP_HEIGT);
-      warper.setCorner(ofxGLWarper::BOTTOM_LEFT, 0,APP_HEIGT);
-  }
+	if ((key == 'h') || (key == 'H') || (key == 'a') || (key == 'A') || (key == OF_KEY_F1)) {
+		guia->setVisible(false);
+		guib->setVisible(false);
+		warper.deactivate();
+		bshowImagesAndSkeleton = false;
+		guih->toggleVisible();
+	}
+	else if ((key == 'c') || (key == 'C')) {
+		guia->setVisible(false);
+		guib->setVisible(false);
+		guih->setVisible(false);
+		bshowImagesAndSkeleton = false;
+		warper.deactivate();
+		bshowCamera = !bshowCamera;
+	}
+	else if ((key == 'y') || (key == 'Y')) {
+		guia->setVisible(false);
+		guib->setVisible(false);
+		guih->setVisible(false);
+		bshowImagesAndSkeleton = false;
+		warper.toggleActive();
+	}
+	else if ((key == 'j') || (key == 'J') || (key == 'g') || (key == 'G')) {
+		guib->setVisible(false);
+		guih->setVisible(false);
+		warper.deactivate();
+		guia->toggleVisible();
+		bshowImagesAndSkeleton = !bshowImagesAndSkeleton;
+	}
+	else if ((key == 'f') || (key == 'F')) {
+		ofToggleFullscreen();
+	}
+	else if ((key == 'b') || (key == 'B')) {
+		toogleDrawInfoGrid();
+		guia->setVisible(false);
+		guih->setVisible(false);
+		warper.deactivate();
+		bshowImagesAndSkeleton = false;
+		guib->toggleVisible();
+	}
+	else if ((key == 'r') || (key == 'R')) {
+		// reset corners
+		warper.setCorner(ofxGLWarper::TOP_LEFT, 0, 0);
+		warper.setCorner(ofxGLWarper::TOP_RIGHT, APP_WIDTH, 0);
+		warper.setCorner(ofxGLWarper::BOTTOM_RIGHT, APP_WIDTH, APP_HEIGT);
+		warper.setCorner(ofxGLWarper::BOTTOM_LEFT, 0, APP_HEIGT);
+	}
 
-  if (key == 'a')
-  {
-	  if (stage == PLAY)
-	  {
-		  player->normalJump();
-	  }
-  }
+	if (key == 's')
+	{
+		if (stage == PLAY)
+		{
+			player->normalJump();
+		}
+	}
 
-  if (key == 's')
-  {
-	  if (stage == PLAY)
-	  {
-		  player->highJump();
-	  }
-  }
+	if (key == 'w')
+	{
+		if (stage == PLAY)
+		{
+			player->highJump();
+		}
+	}
 
-  if (key == 'd')
-  {
-	  if (stage == PLAY)
-	  {
-		  player->throughJump();
-	  }
-  }
+	if (key == 'd')
+	{
+		if (stage == PLAY)
+		{
+			player->throughJump();
+		}
+	}
 
-  if (key == 'f')
-  {
-	  if (stage == PLAY)
-	  {
-		  player->slide();
-	  }
-  }
+	if (key == 'x')
+	{
+		if (stage == PLAY)
+		{
+			player->slide();
+			//cam.rotateDeg(-45, glm::vec3(0, 1, 0));
+			cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
+			cam.rotateRad((3 * PI / 2), glm::vec3(0, -1, 0));
+			is_slide = true;
+			actual_position = player->position;
+		}
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
+void ofApp::keyReleased(int key) {
 	if (key == 's')
 	{
 		if (stage == START)
@@ -878,162 +883,162 @@ void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y){
-  ofVec4f v = warper.fromScreenToWarpCoord(x,y,0);
-  warpMousePos.x = v.x;
-  warpMousePos.y = v.y;
+void ofApp::mouseMoved(int x, int y) {
+	ofVec4f v = warper.fromScreenToWarpCoord(x, y, 0);
+	warpMousePos.x = v.x;
+	warpMousePos.y = v.y;
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
+void ofApp::mouseReleased(int x, int y, int button) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
+void ofApp::windowResized(int w, int h) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::gotMessage(ofMessage msg) {
 
 }
 
 //--------------------------------------------------------------
-void ofApp::guiEvent(ofxUIEventArgs &e){
-    string name = e.widget->getName();
-    int kind = e.widget->getKind();
+void ofApp::dragEvent(ofDragInfo dragInfo) {
 
-    if(name == "reset corners"){
-        // reset corners
-        warper.setCorner(warper.TOP_LEFT, 0,0);
-        warper.setCorner(warper.TOP_RIGHT, APP_WIDTH,0);
-        warper.setCorner(warper.BOTTOM_RIGHT, APP_WIDTH,APP_HEIGT);
-        warper.setCorner(warper.BOTTOM_LEFT, 0,APP_HEIGT);
-    }
-    else if(name == "load factory defaults"){
-        // reset corners
-        warper.setCorner(warper.TOP_LEFT, 0,0);
-        warper.setCorner(warper.TOP_RIGHT, APP_WIDTH,0);
-        warper.setCorner(warper.BOTTOM_RIGHT, APP_WIDTH,APP_HEIGT);
-        warper.setCorner(warper.BOTTOM_LEFT, 0,APP_HEIGT);
-        // parametres
-        baixaHoTotAvall = 0; // adjustment fi up-down
-        mouHoTotDretaEsq = 0; // adjustment fi left-right
-    }
+}
+
+//--------------------------------------------------------------
+void ofApp::guiEvent(ofxUIEventArgs &e) {
+	string name = e.widget->getName();
+	int kind = e.widget->getKind();
+
+	if (name == "reset corners") {
+		// reset corners
+		warper.setCorner(warper.TOP_LEFT, 0, 0);
+		warper.setCorner(warper.TOP_RIGHT, APP_WIDTH, 0);
+		warper.setCorner(warper.BOTTOM_RIGHT, APP_WIDTH, APP_HEIGT);
+		warper.setCorner(warper.BOTTOM_LEFT, 0, APP_HEIGT);
+	}
+	else if (name == "load factory defaults") {
+		// reset corners
+		warper.setCorner(warper.TOP_LEFT, 0, 0);
+		warper.setCorner(warper.TOP_RIGHT, APP_WIDTH, 0);
+		warper.setCorner(warper.BOTTOM_RIGHT, APP_WIDTH, APP_HEIGT);
+		warper.setCorner(warper.BOTTOM_LEFT, 0, APP_HEIGT);
+		// parametres
+		baixaHoTotAvall = 0; // adjustment fi up-down
+		mouHoTotDretaEsq = 0; // adjustment fi left-right
+	}
 }
 
 //--------------------------------------------------------------
 //---PECES EMPTY -----------------------------------------------
 //--------------------------------------------------------------
-void ofApp::comprobarEstatsPecesEmpty(){
-    if(peca1.estatPeca == THE_END){ // seguent peca: tornem-hi
-        setupPeca1();
-    }
+void ofApp::comprobarEstatsPecesEmpty() {
+	if (peca1.estatPeca == THE_END) { // seguent peca: tornem-hi
+		setupPeca1();
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::setupPeca1(){
-    int g = 0;
-    do{
-        g = (int)ofRandom(0,NUM_COLS*NUM_ROWS);
-    } while(myGrid.brectGridActiu[g] == false);
-    peca1.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
-    comptadorPeces++;
+void ofApp::setupPeca1() {
+	int g = 0;
+	do {
+		g = (int)ofRandom(0, NUM_COLS*NUM_ROWS);
+	} while (myGrid.brectGridActiu[g] == false);
+	peca1.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+	comptadorPeces++;
 
-    peca1.estatPeca = CANVIA_ESTAT;
-    peca1.estatPecaNext = APAREIX;
-    peca1.bpecaActiva = true;
+	peca1.estatPeca = CANVIA_ESTAT;
+	peca1.estatPecaNext = APAREIX;
+	peca1.bpecaActiva = true;
 }
 
 //--------------------------------------------------------------
 //--- HELPERS --------------------------------------------------
 //--------------------------------------------------------------
-void ofApp::toogleDrawInfoGrid(){
-    myGrid.toggleDrawInfoHelp();
-    peca1.toggleDrawInfoHelp();
-    botoStart.toggleDrawInfoHelp();
-    bdrawMouseWarped = !bdrawMouseWarped;
+void ofApp::toogleDrawInfoGrid() {
+	myGrid.toggleDrawInfoHelp();
+	peca1.toggleDrawInfoHelp();
+	botoStart.toggleDrawInfoHelp();
+	bdrawMouseWarped = !bdrawMouseWarped;
 }
 
 //--------------------------------------------------------------
-string ofApp::pantallaToString(){
-    if(pantallaJoc == START){
-        return "START";
-    }
-    else if(pantallaJoc == PLAY){
-        return "PLAY";
-    }
-    else if(pantallaJoc == END){
-        return "END";
-    }
-    else{
-        return "NO SE";
-    }
+string ofApp::pantallaToString() {
+	if (pantallaJoc == START) {
+		return "START";
+	}
+	else if (pantallaJoc == PLAY) {
+		return "PLAY";
+	}
+	else if (pantallaJoc == END) {
+		return "END";
+	}
+	else {
+		return "NO SE";
+	}
 }
 
 //--------------------------------------------------------------
 //--- PUNTUACIO ------------------------------------------------
 //--------------------------------------------------------------
-void ofApp::actualitzaPuntsEmpty(int & e){
-    singleton->setPuntuacioJugador(singleton->getPuntuacioJugador() + e);
+void ofApp::actualitzaPuntsEmpty(int & e) {
+	singleton->setPuntuacioJugador(singleton->getPuntuacioJugador() + e);
 }
 
 //--------------------------------------------------------------
-void ofApp::drawTemps(){
-    string s = ofToString(jocMinutsTimerMinuts,2,'0') + ":" + ofToString(jocMinutsTimerSegons,2,'0');
-    ofRectangle rs;
-        rs = saltingTypo.getStringBoundingBox(s,0,0);
-        ofPushMatrix();
-    ofTranslate(APP_WIDTH_MEITAT-rs.width*0.5,35);
-    if(jocMinutsTimerSegonsLeft < 60){
-        ofSetColor(255,0,0,255); // temps en vermell
-    }
-    else{
-        ofSetColor(255); // temps en blanc
-    }
-    saltingTypo.drawString(s,0,0);
-    ofPopMatrix();
+void ofApp::drawTemps() {
+	string s = ofToString(jocMinutsTimerMinuts, 2, '0') + ":" + ofToString(jocMinutsTimerSegons, 2, '0');
+	ofRectangle rs;
+	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
+	ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, 35);
+	if (jocMinutsTimerSegonsLeft < 60) {
+		ofSetColor(255, 0, 0, 255); // temps en vermell
+	}
+	else {
+		ofSetColor(255); // temps en blanc
+	}
+	saltingTypo.drawString(s, 0, 0);
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------
-void ofApp::drawPuntuacio(){
-    string s = ofToString(singleton->getPuntuacioJugador()) + " POINTS!";
-    ofRectangle rs;
-    rs = saltingTypo.getStringBoundingBox(s,0,0);
-    ofPushMatrix();
-    ofTranslate(APP_WIDTH_MEITAT-rs.width*0.5,135);
-    ofSetColor(saltingBlue);
-    saltingTypo.drawString(s,0,0);
-    ofPopMatrix();
+void ofApp::drawPuntuacio() {
+	string s = ofToString(singleton->getPuntuacioJugador()) + " POINTS!";
+	ofRectangle rs;
+	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
+	ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, 135);
+	ofSetColor(saltingBlue);
+	saltingTypo.drawString(s, 0, 0);
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------
 /*
 void ofApp::drawEnd(){
-    string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + " POINTS";
-    ofRectangle rs;
-        rs = saltingTypo.getStringBoundingBox(s,0,0);
-        ofPushMatrix();
-    ofTranslate(APP_WIDTH_MEITAT-rs.width*0.5,APP_HEIGT_MEITAT-rs.height*0.5);
-    ofSetColor(255);
-    saltingTypo.drawString(s,0,0);
-    ofPopMatrix();
+	string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + " POINTS";
+	ofRectangle rs;
+		rs = saltingTypo.getStringBoundingBox(s,0,0);
+		ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT-rs.width*0.5,APP_HEIGT_MEITAT-rs.height*0.5);
+	ofSetColor(255);
+	saltingTypo.drawString(s,0,0);
+	ofPopMatrix();
 }
 */
 
@@ -1062,7 +1067,7 @@ void Player::render()
 		position.z = 15;
 	}
 
-	if (collision || position.z < -2000)
+	if (collision || position.z < -200)
 	{
 		//cout << "DEAD BY VOX" << endl;
 		zVelocity = 0;
@@ -1205,8 +1210,19 @@ void ofApp::drawLevel()
 	player->falling = isFloor(player->position);
 	player->collision = isBox(player->position);
 
-	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
+	//CAMARA
+	//cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
+	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z + player->zVelocity);
 	cam.begin();
+
+	if (is_slide)
+	{
+		if (player->position.y == (actual_position.y + 150))
+		{
+			is_slide = false;
+			cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
+		}
+	}
 
 	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
 	{
