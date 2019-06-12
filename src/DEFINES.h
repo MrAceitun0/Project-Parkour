@@ -17,10 +17,10 @@
 #define NUM_PANTALLES                   2 // JOC
 
 enum pantallesJoc{
-    START,
-    PLAY,
+	START,
+	PLAY,
 	DEATH,
-    END
+	END
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/
