@@ -207,21 +207,23 @@ void ofApp::setup() {
 	tracker->run();
 #endif
 
+	menu_image.loadImage("menu.png");
+
 	cam.setGlobalPosition(glm::vec3(0, -100, 90));
 	cam.tilt(80);
 
 	player = new Player();
-
+	/*
 	Floor* fInit = new Floor();
 	fInit->position = glm::vec3(0, 600, 0);
-    fInit->size = 30000;
+    fInit->size_ = 30000;
     floors.push_back(fInit);
 
 	for (int i = 3; i < 15; i++)
 	{
 		Floor* f = new Floor();
 		f->position = glm::vec3(0, i * 600, 0);
-		f->size = 500;
+		f->size_ = 500;
 		floors.push_back(f);
     }
 
@@ -229,9 +231,12 @@ void ofApp::setup() {
 	{
 		Box* b = new Box();
 		b->position = glm::vec3(0, 500 + i * 400, 200);
-		b->size = 100;
+		b->size_ = 100;
 		boxes.push_back(b);
 	}
+	*/
+	generateEasyLevel();
+	generateHardLevel();
 
 	player->gravity = -3.0;
 }
@@ -418,7 +423,11 @@ void ofApp::draw() {
 	{
 		drawMenu();
 	}
-	else if (stage == PLAY)
+	else if (stage == EASY_PLAY)
+	{
+		drawLevel();
+	}
+	else if (stage == HARD_PLAY)
 	{
 		drawLevel();
 	}
@@ -825,7 +834,7 @@ void ofApp::keyPressed(int key) {
 
 	if (key == 's')
 	{
-		if (stage == PLAY)
+		if (stage == EASY_PLAY || stage == HARD_PLAY)
 		{
 			player->normalJump();
 		}
@@ -833,7 +842,7 @@ void ofApp::keyPressed(int key) {
 
 	if (key == 'w')
 	{
-		if (stage == PLAY)
+		if (stage == HARD_PLAY)
 		{
 			player->highJump();
 		}
@@ -841,7 +850,7 @@ void ofApp::keyPressed(int key) {
 
 	if (key == 'd')
 	{
-		if (stage == PLAY)
+		if (stage == HARD_PLAY)
 		{
 			player->throughJump();
 		}
@@ -849,13 +858,13 @@ void ofApp::keyPressed(int key) {
 
 	if (key == 'x')
 	{
-		if (stage == PLAY)
+		if (stage == HARD_PLAY)
 		{
 			player->slide();
 		}
 	}
 
-	if (stage == PLAY)
+	if (stage == HARD_PLAY)
 	{
 		if (!player->is_slide && player->sliding)
 		{
@@ -869,22 +878,39 @@ void ofApp::keyPressed(int key) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key) {
-	if (key == 's')
+void ofApp::keyReleased(int key) 
+{
+	if (key == '1')
 	{
 		if (stage == START)
 		{
-			stage = PLAY;
+			stage = EASY_PLAY;
+			player->game_mode = 1;
 		}
-		else if (stage == DEATH)
+	}
+
+	if (key == '2')
+	{
+		if (stage == START)
+		{
+			stage = HARD_PLAY;
+			player->game_mode = 2;
+		}
+	}
+	
+	if (key == 's')
+	{
+		if (stage == DEATH)
 		{
 			restartGame();
-			stage = PLAY;
+			stage = START;
+			player->game_mode = 0;
 		}
 		else if (stage == END)
 		{
 			restartGame();
-			stage = PLAY;
+			stage = START;
+			player->game_mode = 0;
 		}
 	}
 }
@@ -988,6 +1014,12 @@ string ofApp::pantallaToString() {
 	if (pantallaJoc == START) {
 		return "START";
 	}
+	else if (pantallaJoc == EASY_PLAY) {
+		return "EASY_PLAY";
+	}
+	else if (pantallaJoc == HARD_PLAY) {
+		return "HARD_PLAY";
+	}
 	else if (pantallaJoc == PLAY) {
 		return "PLAY";
 	}
@@ -1081,10 +1113,21 @@ void Player::render()
 		stage = DEATH;
 	}
 
-	if (position.y >= 600000)
+	if (game_mode == 1)
 	{
-		zVelocity = 0;
-		stage = END;
+		if (position.y >= 9800)
+		{
+			zVelocity = 0;
+			stage = END;
+		}
+	}
+	else if (game_mode == 2)
+	{
+		if (position.y >= 19800)
+		{
+			zVelocity = 0;
+			stage = END;
+		}
 	}
 
 	ofSetColor(0, 255, 0);
@@ -1096,18 +1139,30 @@ void Player::render()
 void Player::update()
 {
 	/*
-    if ((myJoints[23] <= 550 || myJoints[19] <= 550) && (myJoints[9] <= 200 || myJoints[15] <= 200))
-        highJump();
-    else if (myJoints[23] <= 650 || myJoints[19] <= 650)
-        normalJump();
-    else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
-        slide();
+	if(game_mode == 0)
+	{
+
+	}
+	else if(game_mode == 1)
+	{
+		if (myJoints[23] <= 650 || myJoints[19] <= 650)
+			normalJump();
+	}
+	else if(game_mode == 2)
+	{
+		if ((myJoints[23] <= 550 || myJoints[19] <= 550) && (myJoints[9] <= 200 || myJoints[15] <= 200))
+			highJump();
+		else if (myJoints[23] <= 650 || myJoints[19] <= 650)
+			normalJump();
+		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
+			slide();
+	}
 	*/
 }
 
 void Player::normalJump()
 {
-	if (stage == PLAY)
+	if (stage == EASY_PLAY || stage == HARD_PLAY)
 	{
 		if (jumping)
 			return;
@@ -1119,7 +1174,7 @@ void Player::normalJump()
 
 void Player::highJump()
 {
-	if (stage == PLAY)
+	if (stage == HARD_PLAY)
 	{
 		if (jumping)
 			return;
@@ -1131,7 +1186,7 @@ void Player::highJump()
 
 void Player::throughJump()
 {
-	if (stage == PLAY)
+	if (stage == HARD_PLAY)
 	{
 		if (jumping)
 			return;
@@ -1143,7 +1198,7 @@ void Player::throughJump()
 
 void Player::slide()
 {
-	if (stage == PLAY)
+	if (stage == HARD_PLAY)
 	{
 		sliding = true;
 		cout << "Slide\n";
@@ -1157,17 +1212,28 @@ Floor::Floor()
 
 void Floor::render()
 {
-	ofSetColor(255, 0, 0);
+	ofSetColor(color.x, color.y, color.z);
 	ofFill();
-	ofDrawPlane(position, size, size);
+	ofDrawPlane(position, size.x, size.y);
 }
 
 bool ofApp::isFloor(glm::vec3 p_position)
 {
-	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	if (stage == EASY_PLAY)
 	{
-		if (p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
-			return true;
+		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
+		{
+			if (p_position.y >= (it->position.y - it->size.y / 2) && p_position.y <= (it->position.y + it->size.y / 2))
+				return true;
+		}
+	}
+	else if (stage == HARD_PLAY)
+	{
+		for (list<Floor>::iterator it = hard_floors.begin(); it != hard_floors.end(); ++it)
+		{
+			if (p_position.y >= (it->position.y - it->size.y / 2) && p_position.y <= (it->position.y + it->size.y / 2))
+				return true;
+		}
 	}
 
 	return false;
@@ -1180,18 +1246,30 @@ Box::Box()
 
 void Box::render()
 {
-	ofSetColor(0, 0, 255);
+	ofSetColor(color.x, color.y, color.z);
 	ofFill();
-	ofDrawBox(position, size);
+	ofDrawBox(position, size.x, size.y, size.z);
 }
 
 bool ofApp::isBox(glm::vec3 p_position)
 {
-	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
+	if (stage == EASY_PLAY)
 	{
-		if (p_position.y >= ((*it)->position.y - (*it)->size / 2) && p_position.y <= ((*it)->position.y + (*it)->size / 2))
-			if (p_position.z >= ((*it)->position.z - (*it)->size / 2))
-				return true;
+		for (list<Box>::iterator it = easy_boxes.begin(); it != easy_boxes.end(); ++it)
+		{
+			if (p_position.y >= (it->position.y - it->size.y / 2) && p_position.y <= (it->position.y + it->size.y / 2))
+				if (p_position.z >= (it->position.z - it->size.z / 2) && p_position.z <= (it->position.z + it->size.z / 2))
+					return true;
+		}
+	}
+	else if (stage == HARD_PLAY)
+	{
+		for (list<Box>::iterator it = hard_boxes.begin(); it != hard_boxes.end(); ++it)
+		{
+			if (p_position.y >= (it->position.y - it->size.y / 2) && p_position.y <= (it->position.y + it->size.y / 2))
+				if (p_position.z >= (it->position.z - it->size.z / 2) && p_position.z <= (it->position.z + it->size.z / 2))
+					return true;
+		}
 	}
 
 	return false;
@@ -1199,16 +1277,7 @@ bool ofApp::isBox(glm::vec3 p_position)
 
 void ofApp::drawMenu()
 {
-	//menuImage.draw(0, 0, APP_WIDTH, APP_HEIGT);
-
-	string s = "JUMP TO START";
-	ofRectangle rs;
-	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
-	ofPushMatrix();
-	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
-	ofSetColor(255);
-	saltingTypo.drawString(s, 0, 0);
-	ofPopMatrix();
+	menu_image.draw(0, 0, APP_WIDTH, APP_HEIGT);
 }
 
 void ofApp::drawLevel()
@@ -1221,23 +1290,38 @@ void ofApp::drawLevel()
 	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z + player->zVelocity);
 	cam.begin();
 
-	if (player->is_slide)
+	if (stage == EASY_PLAY)
 	{
-		if (player->position.y == (actual_position.y + 150))
+		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
 		{
-			player->is_slide = false;
-			cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
+			it->render();
+		}
+
+		for (list<Box>::iterator it = easy_boxes.begin(); it != easy_boxes.end(); ++it)
+		{
+			it->render();
 		}
 	}
-
-	for (list<Floor*>::iterator it = floors.begin(); it != floors.end(); ++it)
+	else if (stage == HARD_PLAY)
 	{
-		(*it)->render();
-	}
+		if (player->is_slide)
+		{
+			if (player->position.y == (actual_position.y + 150))
+			{
+				player->is_slide = false;
+				cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
+			}
+		}
 
-	for (list<Box*>::iterator it = boxes.begin(); it != boxes.end(); ++it)
-	{
-		(*it)->render();
+		for (list<Floor>::iterator it = hard_floors.begin(); it != hard_floors.end(); ++it)
+		{
+			it->render();
+		}
+
+		for (list<Box>::iterator it = hard_boxes.begin(); it != hard_boxes.end(); ++it)
+		{
+			it->render();
+		}
 	}
 
 	player->render();
@@ -1247,7 +1331,7 @@ void ofApp::drawLevel()
 
 void ofApp::drawDeath()
 {
-	string s = "YOU DIED - JUMP TO START";
+	string s = "YOU DIED - JUMP TO GO TO MENU";
 	ofRectangle rs;
 	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
 	ofPushMatrix();
@@ -1259,7 +1343,7 @@ void ofApp::drawDeath()
 
 void ofApp::drawEnd()
 {
-	string s = "YOU WIN! - JUMP TO RESTART";
+	string s = "YOU WIN! - JUMP TO GO TO MENU";
 	ofRectangle rs;
 	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
 	ofPushMatrix();
@@ -1281,4 +1365,187 @@ void ofApp::restartGame()
 	player->falling = false;
 	player->jumping = false;
 	player->collision = false;
+}
+
+void ofApp::generateEasyLevel()
+{
+	Floor f;
+	Box b;
+
+	f.position = glm::vec3(0, 0, 0);
+	f.size = glm::vec2(1500, 1500);
+	f.color = glm::vec3(255, 255, 0);
+	f.position.y += (f.size.y / 2);
+	easy_floors.push_back(f);
+
+	f.position = glm::vec3(0, 1600, 0);
+	f.size = glm::vec2(500, 2000);
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	easy_floors.push_back(f);
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 2650, 0);
+		b.size = glm::vec3(100, 1, 40);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		easy_boxes.push_back(b);
+	}
+
+	f.position = glm::vec3(0, 3700, 0);
+	f.size = glm::vec2(500, 2500);
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	easy_floors.push_back(f);
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 4500, 0);
+		b.size = glm::vec3(100, 1, 40);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		easy_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 5400, 0);
+		b.size = glm::vec3(100, 1, 40);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		easy_boxes.push_back(b);
+	}
+
+	f.position = glm::vec3(0, 6300, 0);
+	f.size = glm::vec2(500, 3500);
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	easy_floors.push_back(f);
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 7300, 0);
+		b.size = glm::vec3(100, 1, 40);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		easy_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 8300, 0);
+		b.size = glm::vec3(100, 1, 40);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		easy_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 9300, 0);
+		b.size = glm::vec3(100, 1, 40);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		easy_boxes.push_back(b);
+	}
+
+	f.position = glm::vec3(0, 9800, 0);
+	f.size = glm::vec2(1500, 1500);
+	f.color = glm::vec3(0, 2500, 0);
+	f.position.y += (f.size.y / 2);
+	easy_floors.push_back(f);
+
+	/*
+	f.position = glm::vec3(0, , 0);
+	f.size = glm::vec2(500, );
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	easy_floors.push_back(f);
+	*/
+
+	/*
+	b.position = glm::vec3(i * 200, , 0);
+	b.size = glm::vec3(100, 10, 30);
+	b.color = glm::vec3(0, 0, 255);
+	b.position.y += (b.size.y / 2);
+	easy_boxes.push_back(b);
+	*/
+}
+
+void ofApp::generateHardLevel()
+{
+	Floor f;
+	Box b;
+
+	f.position = glm::vec3(0, 0, 0);
+	f.size = glm::vec2(1500, 1500);
+	f.color = glm::vec3(255, 255, 0);
+	f.position.y += (f.size.y / 2);
+	hard_floors.push_back(f);
+
+	f.position = glm::vec3(0, 1600, 0);
+	f.size = glm::vec2(500, 4000);
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	hard_floors.push_back(f);
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 2600, 0);
+		b.size = glm::vec3(100, 10, 60);
+		b.color = glm::vec3(255, 0, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 3600, 200);
+		b.size = glm::vec3(100, 100, 100);
+		b.color = glm::vec3(0, 255, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	/*
+	f.position = glm::vec3(0, , 0);
+	f.size = glm::vec2(500, );
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	hard_floors.push_back(f);
+	*/
+
+	/*	normal jump
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, , 0);
+		b.size = glm::vec3(100, 10, 30);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+	*/
+
+	/*	high jump
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, , 0);
+		b.size = glm::vec3(100, 10, 60);
+		b.color = glm::vec3(255, 0, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+	*/
+
+	/*	slide
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, , 0);
+		b.size = glm::vec3(100, 100, 100);
+		b.color = glm::vec3(0, 255, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+	*/
 }

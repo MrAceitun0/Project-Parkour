@@ -16,28 +16,30 @@
 
 #define NUM_PANTALLES                   2 // JOC
 
-enum pantallesJoc{
+enum pantallesJoc {
 	START,
 	PLAY,
+	EASY_PLAY,
+	HARD_PLAY,
 	DEATH,
 	END
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/
 // Overload the pantallesJoc++ operator
-inline pantallesJoc& operator++(pantallesJoc& eDOW, int){
-	const int i = static_cast<int>(eDOW)+1;
+inline pantallesJoc& operator++(pantallesJoc& eDOW, int) {
+	const int i = static_cast<int>(eDOW) + 1;
 	eDOW = static_cast<pantallesJoc>((i) % NUM_PANTALLES);
 	return eDOW;
 }
 
 // Overload the pantallesJoc-- operator
-inline pantallesJoc& operator--(pantallesJoc& eDOW, int){
-	const int i = static_cast<int>(eDOW)-1;
-	if (i < 0){ // Check whether to cycle to last item if number goes below 0
+inline pantallesJoc& operator--(pantallesJoc& eDOW, int) {
+	const int i = static_cast<int>(eDOW) - 1;
+	if (i < 0) { // Check whether to cycle to last item if number goes below 0
 		eDOW = static_cast<pantallesJoc>(NUM_PANTALLES);
 	}
-	else{ // Else set it to current number -1
+	else { // Else set it to current number -1
 		eDOW = static_cast<pantallesJoc>((i) % NUM_PANTALLES);
 	}
 	return eDOW;

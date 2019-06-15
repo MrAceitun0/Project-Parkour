@@ -171,6 +171,8 @@ public:
 	//--------------------------------------------------------------
 	ofEasyCam cam;
 
+	ofImage menu_image;
+
 	Player* player = NULL;
 	list<Floor*> floors;
 	list<Box*> boxes;
@@ -178,6 +180,14 @@ public:
 	glm::vec3 actual_position;
 
 	//bool is_slide = false;
+
+	list<Floor> easy_floors;
+	list<Box> easy_boxes;
+	void generateEasyLevel();
+	
+	list<Floor> hard_floors;
+	list<Box> hard_boxes;
+	void generateHardLevel();
 
 	void drawMenu();
 	void drawLevel();
@@ -193,14 +203,18 @@ class Player
 {
 public:
 	Player();
+
 	ofNode node;
 	glm::vec3 position = glm::vec3(0, 0, 0);
+
 	float yVelocity = 10;
 	float zVelocity = 0;
 	float gravity;
 	float hitbox = 30;
+
 	void render();
 	void update();
+
 	bool falling = false;
 	bool jumping = false;
 	bool collision = false;
@@ -208,6 +222,8 @@ public:
 	bool sliding = false;
 
 	int myJoints[24];
+
+	int game_mode = 0;
 
 	void normalJump();
 	void highJump();
@@ -220,8 +236,14 @@ class Floor
 public:
 	Floor();
 	glm::vec3 position;
-	float size;
+	glm::vec2 size;
+	glm::vec3 color;
+
+	float size_;
+
 	void render();
+
+	void render2();
 };
 
 class Box
@@ -229,6 +251,12 @@ class Box
 public:
 	Box();
 	glm::vec3 position;
-	float size;
+	glm::vec3 size;
+	glm::vec3 color;
+
+	float size_;
+
 	void render();
+
+	void render2();
 };
