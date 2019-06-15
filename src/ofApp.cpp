@@ -20,7 +20,7 @@ using namespace glm;
 void ofApp::setup() {
 
 	// APP
-	ofSetFullscreen(true);
+	//ofSetFullscreen(true);
 	//ofHideCursor();
 
 	// GENRAL
@@ -126,7 +126,7 @@ void ofApp::setup() {
 
 #ifdef NUITRACK
 	// REALSENSE
-	bool bPlayFile = true;
+	bool bPlayFile = false;
 	pc.setMode(OF_PRIMITIVE_POINTS);
 
 	tracker = ofxnui::Tracker::create();
@@ -214,8 +214,8 @@ void ofApp::setup() {
 
 	Floor* fInit = new Floor();
 	fInit->position = glm::vec3(0, 600, 0);
-	fInit->size = 1500;
-	floors.push_back(fInit);
+    fInit->size = 30000;
+    floors.push_back(fInit);
 
 	for (int i = 3; i < 15; i++)
 	{
@@ -223,7 +223,7 @@ void ofApp::setup() {
 		f->position = glm::vec3(0, i * 600, 0);
 		f->size = 500;
 		floors.push_back(f);
-	}
+    }
 
 	for (int i = 0; i < 1; i++)
 	{
@@ -648,7 +648,7 @@ void ofApp::updateJoint(Joint &j) {
 		pmap.y = ofMap(p.y, 0.0, 1.0, 0, APP_HEIGT);
 		pmap.z = 0;
 		pmap.x = APP_WIDTH - pmap.x; // TODO posr en un control aquest invertit per la pos de camera
-		myJoints[j.type] = pmap.z;
+		player->myJoints[j.type] = pmap.y;
 		posicionsBlobs[totalBlobsDetected].x = pmap.x;
 		posicionsBlobs[totalBlobsDetected].y = pmap.y;
 		totalBlobsDetected++;
@@ -852,11 +852,18 @@ void ofApp::keyPressed(int key) {
 		if (stage == PLAY)
 		{
 			player->slide();
-			//cam.rotateDeg(-45, glm::vec3(0, 1, 0));
-			cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
-			cam.rotateRad((3 * PI / 2), glm::vec3(0, -1, 0));
-			is_slide = true;
+		}
+	}
+
+	if (stage == PLAY)
+	{
+		if (!player->is_slide && player->sliding)
+		{
+			cam.rotateRad(-(PI / 4), glm::vec3(0, -1, 0));
 			actual_position = player->position;
+			player->sliding = false;
+			player->is_slide = true;
+
 		}
 	}
 }
@@ -1074,7 +1081,7 @@ void Player::render()
 		stage = DEATH;
 	}
 
-	if (position.y >= 6000)
+	if (position.y >= 600000)
 	{
 		zVelocity = 0;
 		stage = END;
@@ -1084,20 +1091,18 @@ void Player::render()
 	ofFill();
 	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
 	ofDrawSphere(position, 15);
-
-	cout << myJoints[23] << endl;
 }
 
 void Player::update()
 {
-	if (myJoints[23] >= 0.2 && myJoints[19] >= 0.2)
-		normalJump();
-	else if (myJoints[23] >= 0.3 && myJoints[19] >= 0.3 && myJoints[9] >= 0.8 && myJoints[15] >= 0.8)
-		highJump();
-	else if (myJoints[23] >= 0.2 && myJoints[19] >= 0.2 && myJoints[9] <= 0.8 && myJoints[15] <= 0.8)
-		throughJump();
-	else if (myJoints[23] <= 0.2 && myJoints[19] <= 0.2 && myJoints[9] <= 0.2 && myJoints[15] <= 0.2)
-		slide();
+	/*
+    if ((myJoints[23] <= 550 || myJoints[19] <= 550) && (myJoints[9] <= 200 || myJoints[15] <= 200))
+        highJump();
+    else if (myJoints[23] <= 650 || myJoints[19] <= 650)
+        normalJump();
+    else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
+        slide();
+	*/
 }
 
 void Player::normalJump()
@@ -1140,6 +1145,7 @@ void Player::slide()
 {
 	if (stage == PLAY)
 	{
+		sliding = true;
 		cout << "Slide\n";
 	}
 }
@@ -1215,11 +1221,11 @@ void ofApp::drawLevel()
 	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z + player->zVelocity);
 	cam.begin();
 
-	if (is_slide)
+	if (player->is_slide)
 	{
 		if (player->position.y == (actual_position.y + 150))
 		{
-			is_slide = false;
+			player->is_slide = false;
 			cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
 		}
 	}
@@ -1265,7 +1271,11 @@ void ofApp::drawEnd()
 
 void ofApp::restartGame()
 {
+	//cam.setGlobalPosition(glm::vec3(0, -100, 90));
+	//cam.tilt(80);
+
 	cam.setGlobalPosition(glm::vec3(0, -400, 90));
+
 	player->position = glm::vec3(0, 0, 15);
 
 	player->falling = false;

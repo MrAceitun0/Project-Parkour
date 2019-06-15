@@ -177,7 +177,7 @@ public:
 	
 	glm::vec3 actual_position;
 
-	bool is_slide = false;
+	//bool is_slide = false;
 
 	void drawMenu();
 	void drawLevel();
@@ -204,6 +204,8 @@ public:
 	bool falling = false;
 	bool jumping = false;
 	bool collision = false;
+	bool is_slide = false;
+	bool sliding = false;
 
 	int myJoints[24];
 
