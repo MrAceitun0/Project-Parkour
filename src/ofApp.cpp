@@ -209,8 +209,8 @@ void ofApp::setup() {
 
 	menu_image.loadImage("menu.png");
 
-	cam.setGlobalPosition(glm::vec3(0, -100, 90));
 	cam.tilt(80);
+	cam.setGlobalPosition(glm::vec3(0, 0, 0));
 
 	player = new Player();
 	/*
@@ -1089,12 +1089,20 @@ Player::Player()
 void Player::render()
 {
 	update();
+
+	ofSetColor(0, 255, 0);
+	ofFill();
+	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
+	//ofDrawSphere(position, 15);
+}
+
+void Player::update()
+{
 	if (position.z <= 15 && falling == 0)
 	{
-		//cout << "DEAD" << endl;
 		zVelocity += gravity;
 	}
-	else if (position.z > 15 && jumping == 1)
+	else if (position.z > 16 && jumping == 1)
 	{
 		zVelocity += gravity;
 	}
@@ -1108,7 +1116,6 @@ void Player::render()
 
 	if (collision || position.z < -200)
 	{
-		//cout << "DEAD BY VOX" << endl;
 		zVelocity = 0;
 		stage = DEATH;
 	}
@@ -1129,35 +1136,6 @@ void Player::render()
 			stage = END;
 		}
 	}
-
-	ofSetColor(0, 255, 0);
-	ofFill();
-	position = glm::vec3(0, position.y + yVelocity, position.z + zVelocity);
-	ofDrawSphere(position, 15);
-}
-
-void Player::update()
-{
-	/*
-	if(game_mode == 0)
-	{
-
-	}
-	else if(game_mode == 1)
-	{
-		if (myJoints[23] <= 650 || myJoints[19] <= 650)
-			normalJump();
-	}
-	else if(game_mode == 2)
-	{
-		if ((myJoints[23] <= 550 || myJoints[19] <= 550) && (myJoints[9] <= 200 || myJoints[15] <= 200))
-			highJump();
-		else if (myJoints[23] <= 650 || myJoints[19] <= 650)
-			normalJump();
-		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
-			slide();
-	}
-	*/
 }
 
 void Player::normalJump()
@@ -1287,9 +1265,10 @@ void ofApp::drawLevel()
 
 	//CAMARA
 	//cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
-	cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z + player->zVelocity);
+	cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
 	cam.begin();
 
+	cout << cam.getGlobalPosition().z << endl;
 	if (stage == EASY_PLAY)
 	{
 		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
