@@ -204,6 +204,12 @@ class Player
 public:
 	Player();
 
+	ofSoundPlayer normalSound;
+	ofSoundPlayer highSound;
+	ofSoundPlayer slideSound;
+	ofSoundPlayer winSound;
+	ofSoundPlayer deathSound;
+
 	ofNode node;
 	glm::vec3 position = glm::vec3(0, 0, 0);
 

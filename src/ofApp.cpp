@@ -239,6 +239,12 @@ void ofApp::setup() {
 	generateHardLevel();
 
 	player->gravity = -3.0;
+
+	player->normalSound.load("normal.wav");
+	player->highSound.load("high.wav");
+	player->slideSound.load("slide.wav");
+	player->winSound.load("win.wav");
+	player->deathSound.load("death.wav");
 }
 
 //--------------------------------------------------------------
@@ -1116,6 +1122,7 @@ void Player::update()
 
 	if (collision || position.z < -200)
 	{
+		deathSound.play();
 		zVelocity = 0;
 		stage = DEATH;
 	}
@@ -1124,6 +1131,7 @@ void Player::update()
 	{
 		if (position.y >= 9800)
 		{
+			winSound.play();
 			zVelocity = 0;
 			stage = END;
 		}
@@ -1144,7 +1152,7 @@ void Player::normalJump()
 	{
 		if (jumping)
 			return;
-
+		normalSound.play();
 		zVelocity = 30.0;
 		jumping = true;
 	}
@@ -1156,7 +1164,7 @@ void Player::highJump()
 	{
 		if (jumping)
 			return;
-
+		highSound.play();
 		zVelocity = 50.0;
 		jumping = true;
 	}
@@ -1178,6 +1186,7 @@ void Player::slide()
 {
 	if (stage == HARD_PLAY)
 	{
+		slideSound.play();
 		sliding = true;
 		cout << "Slide\n";
 	}
