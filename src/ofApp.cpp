@@ -1127,6 +1127,29 @@ void Player::update()
 		stage = DEATH;
 	}
 
+	if (is_slide && position.z <= -12 && slideDown == true)
+	{
+		slideUp = true;
+		cout << "up" << endl;
+		zVelocity += 1;
+	}
+
+	if (is_slide && position.z > -12 && slideDown == true)
+	{
+		cout << "down" << endl;
+		zVelocity -= 1;
+	}
+
+	if (is_slide && position.z >= 10 && slideUp == true)
+	{
+		slideUp = false;
+		slideDown = false;
+		cout << "stop" << endl;
+		zVelocity = 0;
+		position.z = 15;
+		is_slide = false;
+	}
+
 	if (game_mode == 1)
 	{
 		if (position.y >= 9800)
@@ -1186,9 +1209,13 @@ void Player::slide()
 {
 	if (stage == HARD_PLAY)
 	{
+		if (sliding)
+			return;
+
 		slideSound.play();
 		sliding = true;
-		cout << "Slide\n";
+		slideDown = true;
+		//zVelocity = -30.0;
 	}
 }
 
@@ -1277,7 +1304,7 @@ void ofApp::drawLevel()
 	cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
 	cam.begin();
 
-	cout << cam.getGlobalPosition().z << endl;
+	cout << player->position.z << endl;
 	if (stage == EASY_PLAY)
 	{
 		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
@@ -1296,7 +1323,7 @@ void ofApp::drawLevel()
 		{
 			if (player->position.y == (actual_position.y + 150))
 			{
-				player->is_slide = false;
+				//player->is_slide = false;
 				cam.rotateRad((PI / 4), glm::vec3(0, -1, 0));
 			}
 		}

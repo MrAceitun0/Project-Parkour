@@ -226,6 +226,8 @@ public:
 	bool collision = false;
 	bool is_slide = false;
 	bool sliding = false;
+	bool slideDown = false;
+	bool slideUp = false;
 
 	int myJoints[24];
 
