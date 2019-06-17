@@ -1373,7 +1373,7 @@ void ofApp::drawLevel()
 			it->render();
 		}
 
-		for (list<Box>::iterator it = hard_boxes.begin(); it != hard_boxes.end(); ++it)
+		for (list<Box>::reverse_iterator it = hard_boxes.rbegin(); it != hard_boxes.rend(); ++it)
 		{
 			it->render();
 		}
