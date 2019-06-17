@@ -111,7 +111,7 @@ void ofApp::setup() {
 	guih->addSpacer();
 	guih->addFPS();
 	guih->addSpacer();
-	guih->addTextArea("helpText1", "step 1) WARP: press W | w and mouse click and drag to adjust game's image corners");
+	guih->addTextArea("helpText1", "step 1) WARP: press Y | y and mouse click and drag to adjust game's image corners");
 	guih->addTextArea("helpText2", "step 2) CAM: press C | c to show and hide camera image");
 	guih->addTextArea("helpText3", "step 3) GAME: press J | j | G | g to adjust game");
 	guih->addTextArea("helpText5", "step 4) BUTTONS & GRID: press B | b to show and hide grid and buttons adjustments");
@@ -919,6 +919,11 @@ void ofApp::keyReleased(int key)
 			player->game_mode = 0;
 		}
 	}
+
+	if (key == 'x' && stage == START)
+	{
+		//TUTOTUTORIALI
+	}
 }
 
 //--------------------------------------------------------------
@@ -1182,6 +1187,10 @@ void Player::update()
 			game_mode = 2;
 			stage = HARD_PLAY;
 		}
+		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
+		{
+			//TUTORIAL
+		}
 	}
 	else if(game_mode == 1)
 	{
@@ -1386,6 +1395,7 @@ void ofApp::drawLevel()
 
 void ofApp::drawDeath()
 {
+	//DEATH COOL SCREEN
 	string s = "YOU DIED - JUMP TO GO TO MENU";
 	ofRectangle rs;
 	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
@@ -1398,6 +1408,7 @@ void ofApp::drawDeath()
 
 void ofApp::drawEnd()
 {
+	//END SCREEN COOL
 	string s = "YOU WIN! - JUMP TO GO TO MENU";
 	ofRectangle rs;
 	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
