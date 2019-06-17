@@ -22,7 +22,8 @@ enum pantallesJoc {
 	EASY_PLAY,
 	HARD_PLAY,
 	DEATH,
-	END
+	END,
+	TUTORIAL
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/

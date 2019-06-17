@@ -240,14 +240,14 @@ void ofApp::setup() {
 
 	player->gravity = -3.0;
 
-	player->normalSound.load("normal.FLAC");
-	player->highSound.load("high.FLAC");
-	player->slideSound.load("slide.FLAC");
-	player->winSound.load("win.FLAC");
-	player->deathSound.load("death.FLAC");
+	player->normalSound.load("normal.flac");
+	player->highSound.load("high.flac");
+	player->slideSound.load("slide.flac");
+	player->winSound.load("win.flac");
+	player->deathSound.load("death.flac");
 
-	day.loadImage("day.png");
-	night.loadImage("night.jpg");
+	//day.loadImage("day.png");
+	//night.loadImage("night.jpg");
 }
 
 //--------------------------------------------------------------
@@ -448,6 +448,10 @@ void ofApp::draw() {
 	{
 		drawEnd();
 	}
+	else if (stage == TUTORIAL)
+	{
+		drawTutorial();
+	}
 
 #ifdef NUITRACK
 	// CAMERA
@@ -490,6 +494,48 @@ void ofApp::draw() {
 
 		ofSetColor(255, 255, 0);
 		ofDrawBitmapString("RGBFRAME SIZE " + ofToString(rgbFrameSize.x) + ",  " + ofToString(rgbFrameSize.y), 20, APP_HEIGT_MEITAT - 20);
+	}
+#endif
+
+#ifdef NUITRACK
+	if (stage == START)
+	{
+		if (abs(player->myJoints[1] - player->myJoints[9]) < 50)	//Left
+		{
+			player->game_mode = 1;
+			stage = EASY_PLAY;
+		}
+		else if (abs(player->myJoints[1] - player->myJoints[15]) < 50)	//Right
+		{
+			player->game_mode = 2;
+			stage = HARD_PLAY;
+		}
+		else if ((player->myJoints[9] >= 600 || player->myJoints[15] >= 600))
+		{
+			stage == TUTORIAL;
+		}
+	}
+	else if (stage == DEATH || stage == END)
+	{
+		if (player->myJoints[23] <= 650 || player->myJoints[19] <= 650)
+		{
+			player->position = glm::vec3(0, 0, 15);
+
+			player->falling = false;
+			player->jumping = false;
+			player->collision = false;
+
+			stage = START;
+			player->game_mode = 0;
+		}
+	}
+	else if (stage == TUTORIAL)
+	{
+		if (player->myJoints[23] <= 650 || player->myJoints[19] <= 650)
+		{
+			stage = START;
+			player->game_mode = 0;
+		}
 	}
 #endif
 }
@@ -911,6 +957,7 @@ void ofApp::keyReleased(int key)
 	{
 		if (stage == DEATH)
 		{
+			//restartGame();
 			player->position = glm::vec3(0, 0, 15);
 
 			player->falling = false;
@@ -922,6 +969,7 @@ void ofApp::keyReleased(int key)
 		}
 		else if (stage == END)
 		{
+			//restartGame();
 			player->position = glm::vec3(0, 0, 15);
 
 			player->falling = false;
@@ -931,11 +979,19 @@ void ofApp::keyReleased(int key)
 			stage = START;
 			player->game_mode = 0;
 		}
+		else if (stage == TUTORIAL)
+		{
+			stage = START;
+			player->game_mode = 0;
+		}
 	}
 
-	if (key == 'x' && stage == START)
+	if (key == 'x')
 	{
-		//TUTOTUTORIALI
+		if (stage == START)
+		{
+			stage = TUTORIAL;
+		}
 	}
 }
 
@@ -1185,24 +1241,7 @@ void Player::update()
 	}
 
 #ifdef NUITRACK
-	if(game_mode == 0)
-	{
-		if (abs(myJoints[1] - myJoints[9]) < 50)	//Lesft
-		{
-			game_mode = 1;
-			stage = EASY_PLAY;
-		}
-		else if (abs(myJoints[1] - myJoints[15]) < 50)	//Right
-		{
-			game_mode = 2;
-			stage = HARD_PLAY;
-		}
-		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
-		{
-			//TUTORIAL
-		}
-	}
-	else if(game_mode == 1)
+	if(game_mode == 1)
 	{
 		if (myJoints[23] <= 650 || myJoints[19] <= 650)
 			normalJump();
@@ -1215,20 +1254,6 @@ void Player::update()
 			normalJump();
 		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
 			slide();
-	}
-	else if (stage == DEATH || stage == END)
-	{
-		if (myJoints[23] <= 650 || myJoints[19] <= 650)
-		{
-			position = glm::vec3(0, 0, 15);
-
-			falling = false;
-			jumping = false;
-			collision = false;
-
-			stage = START;
-			game_mode = 0;
-		}
 	}
 #endif
 }
@@ -1365,7 +1390,7 @@ void ofApp::drawLevel()
 
 	if (stage == EASY_PLAY)
 	{
-		day.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		//day.draw(0, 0, APP_WIDTH, APP_HEIGT);
 		cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
 		cam.begin();
 		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
@@ -1380,7 +1405,7 @@ void ofApp::drawLevel()
 	}
 	else if (stage == HARD_PLAY)
 	{
-		night.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		//night.draw(0, 0, APP_WIDTH, APP_HEIGT);
 		cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
 		cam.begin();
 		if (player->is_slide)
@@ -1425,6 +1450,19 @@ void ofApp::drawEnd()
 {
 	//END SCREEN COOL
 	string s = "YOU WIN! - JUMP TO GO TO MENU";
+	ofRectangle rs;
+	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
+	ofPushMatrix();
+	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
+	ofSetColor(255);
+	saltingTypo.drawString(s, 0, 0);
+	ofPopMatrix();
+}
+
+void ofApp::drawTutorial()
+{
+	//END SCREEN COOL
+	string s = "TUTORIAL";
 	ofRectangle rs;
 	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
 	ofPushMatrix();

@@ -193,6 +193,7 @@ public:
 	void drawLevel();
 	void drawDeath();
 	void drawEnd();
+	void drawTutorial();
 
 	ofImage menuImage;
 	ofImage day;

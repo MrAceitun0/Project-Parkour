@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <corners>
 	<corner>
+		<x>1</x>
+		<y>2</y>
+	</corner>
+	<corner>
+		<x>1023</x>
+		<y>3</y>
+	</corner>
+	<corner>
+		<x>1022</x>
+		<y>661</y>
+	</corner>
+	<corner>
 		<x>0</x>
-		<y>0</y>
-	</corner>
-	<corner>
-		<x>732</x>
-		<y>-3</y>
-	</corner>
-	<corner>
-		<x>728</x>
-		<y>770</y>
-	</corner>
-	<corner>
-		<x>0</x>
-		<y>768</y>
+		<y>663</y>
 	</corner>
 	<active>0</active>
 </corners>
