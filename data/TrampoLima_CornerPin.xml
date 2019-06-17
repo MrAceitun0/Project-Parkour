@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<corners>
+	<corner>
+		<x>0</x>
+		<y>0</y>
+	</corner>
+	<corner>
+		<x>732</x>
+		<y>-3</y>
+	</corner>
+	<corner>
+		<x>728</x>
+		<y>770</y>
+	</corner>
+	<corner>
+		<x>0</x>
+		<y>768</y>
+	</corner>
+	<active>0</active>
+</corners>

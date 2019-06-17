@@ -240,11 +240,11 @@ void ofApp::setup() {
 
 	player->gravity = -3.0;
 
-	player->normalSound.load("normal.wav");
-	player->highSound.load("high.wav");
-	player->slideSound.load("slide.wav");
-	player->winSound.load("win.wav");
-	player->deathSound.load("death.wav");
+	player->normalSound.load("normal.FLAC");
+	player->highSound.load("high.FLAC");
+	player->slideSound.load("slide.FLAC");
+	player->winSound.load("win.FLAC");
+	player->deathSound.load("death.FLAC");
 
 	day.loadImage("day.png");
 	night.loadImage("night.jpg");
@@ -911,13 +911,23 @@ void ofApp::keyReleased(int key)
 	{
 		if (stage == DEATH)
 		{
-			restartGame();
+			player->position = glm::vec3(0, 0, 15);
+
+			player->falling = false;
+			player->jumping = false;
+			player->collision = false;
+
 			stage = START;
 			player->game_mode = 0;
 		}
 		else if (stage == END)
 		{
-			restartGame();
+			player->position = glm::vec3(0, 0, 15);
+
+			player->falling = false;
+			player->jumping = false;
+			player->collision = false;
+
 			stage = START;
 			player->game_mode = 0;
 		}
@@ -1210,7 +1220,12 @@ void Player::update()
 	{
 		if (myJoints[23] <= 650 || myJoints[19] <= 650)
 		{
-			restartGame();
+			position = glm::vec3(0, 0, 15);
+
+			falling = false;
+			jumping = false;
+			collision = false;
+
 			stage = START;
 			game_mode = 0;
 		}
