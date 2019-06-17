@@ -1161,12 +1161,52 @@ void Player::update()
 	}
 	else if (game_mode == 2)
 	{
-		if (position.y >= 19800)
+		if (position.y >= 11800)
 		{
+			winSound.play();
 			zVelocity = 0;
 			stage = END;
 		}
 	}
+
+#ifdef NUITRACK
+	if(game_mode == 0)
+	{
+		if (abs(myJoints[1] - myJoints[9]) < 50)	//Lesft
+		{
+			game_mode = 1;
+			stage = EASY_PLAY;
+		}
+		else if (abs(myJoints[1] - myJoints[15]) < 50)	//Right
+		{
+			game_mode = 2;
+			stage = HARD_PLAY;
+		}
+	}
+	else if(game_mode == 1)
+	{
+		if (myJoints[23] <= 650 || myJoints[19] <= 650)
+			normalJump();
+	}
+	else if(game_mode == 2)
+	{
+		if ((myJoints[23] <= 550 || myJoints[19] <= 550) && (myJoints[9] <= 200 || myJoints[15] <= 200))
+			highJump();
+		else if (myJoints[23] <= 650 || myJoints[19] <= 650)
+			normalJump();
+		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
+			slide();
+	}
+	else if (stage == DEATH || stage == END)
+	{
+		if (myJoints[23] <= 650 || myJoints[19] <= 650)
+		{
+			restartGame();
+			stage = START;
+			game_mode = 0;
+		}
+	}
+#endif
 }
 
 void Player::normalJump()
@@ -1467,7 +1507,7 @@ void ofApp::generateEasyLevel()
 
 	f.position = glm::vec3(0, 9800, 0);
 	f.size = glm::vec2(1500, 1500);
-	f.color = glm::vec3(0, 2500, 0);
+	f.color = glm::vec3(0, 255, 0);
 	f.position.y += (f.size.y / 2);
 	easy_floors.push_back(f);
 
@@ -1516,12 +1556,75 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 3600, 200);
-		b.size = glm::vec3(100, 100, 100);
+		b.position = glm::vec3(i * 200, 3600, 65);
+		b.size = glm::vec3(100, 10, 100);
 		b.color = glm::vec3(0, 255, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
 	}
+
+	f.position = glm::vec3(0, 5700, 0);
+	f.size = glm::vec2(500, 5000);
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	hard_floors.push_back(f);
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 6700, 0);
+		b.size = glm::vec3(100, 10, 30);
+		b.color = glm::vec3(0, 0, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 7700, 65);
+		b.size = glm::vec3(100, 10, 100);
+		b.color = glm::vec3(0, 255, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 8700, 0);
+		b.size = glm::vec3(100, 10, 60);
+		b.color = glm::vec3(255, 0, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 9700, 0);
+		b.size = glm::vec3(100, 10, 60);
+		b.color = glm::vec3(255, 0, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	f.position = glm::vec3(0, 10800, 0);
+	f.size = glm::vec2(500, 1000);
+	f.color = glm::vec3(255, 0, 0);
+	f.position.y += (f.size.y / 2);
+	hard_floors.push_back(f);
+
+	for (int i = -1; i < 2; i++)
+	{
+		b.position = glm::vec3(i * 200, 11500, 65);
+		b.size = glm::vec3(100, 10, 100);
+		b.color = glm::vec3(0, 255, 255);
+		b.position.y += (b.size.y / 2);
+		hard_boxes.push_back(b);
+	}
+
+	f.position = glm::vec3(0, 11800, 0);
+	f.size = glm::vec2(1500, 1500);
+	f.color = glm::vec3(0, 255, 0);
+	f.position.y += (f.size.y / 2);
+	hard_floors.push_back(f);
 
 	/*
 	f.position = glm::vec3(0, , 0);
@@ -1556,8 +1659,8 @@ void ofApp::generateHardLevel()
 	/*	slide
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, , 0);
-		b.size = glm::vec3(100, 100, 100);
+		b.position = glm::vec3(i * 200, , 65);
+		b.size = glm::vec3(100, 10, 100);
 		b.color = glm::vec3(0, 255, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
