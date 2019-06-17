@@ -195,6 +195,8 @@ public:
 	void drawEnd();
 
 	ofImage menuImage;
+	ofImage day;
+	ofImage night;
 
 	void restartGame();
 };

@@ -245,6 +245,9 @@ void ofApp::setup() {
 	player->slideSound.load("slide.wav");
 	player->winSound.load("win.wav");
 	player->deathSound.load("death.wav");
+
+	day.loadImage("day.png");
+	night.loadImage("night.jpg");
 }
 
 //--------------------------------------------------------------
@@ -1135,13 +1138,11 @@ void Player::update()
 	if (is_slide && position.z <= -12 && slideDown == true)
 	{
 		slideUp = true;
-		cout << "up" << endl;
 		zVelocity += 1;
 	}
 
 	if (is_slide && position.z > -12 && slideDown == true)
 	{
-		cout << "down" << endl;
 		zVelocity -= 1;
 	}
 
@@ -1149,7 +1150,6 @@ void Player::update()
 	{
 		slideUp = false;
 		slideDown = false;
-		cout << "stop" << endl;
 		zVelocity = 0;
 		position.z = 15;
 		is_slide = false;
@@ -1348,14 +1348,11 @@ void ofApp::drawLevel()
 	player->falling = isFloor(player->position);
 	player->collision = isBox(player->position);
 
-	//CAMARA
-	//cam.setGlobalPosition(cam.getGlobalPosition().x, cam.getGlobalPosition().y + player->yVelocity, cam.getGlobalPosition().z);
-	cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
-	cam.begin();
-
-	cout << player->position.z << endl;
 	if (stage == EASY_PLAY)
 	{
+		day.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
+		cam.begin();
 		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
 		{
 			it->render();
@@ -1368,6 +1365,9 @@ void ofApp::drawLevel()
 	}
 	else if (stage == HARD_PLAY)
 	{
+		night.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
+		cam.begin();
 		if (player->is_slide)
 		{
 			if (player->position.y == (actual_position.y + 150))
