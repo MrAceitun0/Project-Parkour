@@ -198,6 +198,8 @@ public:
 	ofImage menuImage;
 	ofImage day;
 	ofImage night;
+	ofImage win;
+	ofImage death;
 
 	void restartGame();
 };

@@ -246,8 +246,10 @@ void ofApp::setup() {
 	player->winSound.load("win.flac");
 	player->deathSound.load("death.flac");
 
-	//day.loadImage("day.png");
-	//night.loadImage("night.jpg");
+	day.loadImage("day.png");
+	night.loadImage("night.jpg");
+	win.loadImage("win.png");
+	death.loadImage("death.png");
 }
 
 //--------------------------------------------------------------
@@ -1252,7 +1254,7 @@ void Player::update()
 			highJump();
 		else if (myJoints[23] <= 650 || myJoints[19] <= 650)
 			normalJump();
-		else if ((myJoints[23] >= 720 || myJoints[19] >= 720) && (myJoints[9] >= 650 || myJoints[15] >= 650))
+		else if (myJoints[9] >= 600 || myJoints[15] >= 600)
 			slide();
 	}
 #endif
@@ -1390,7 +1392,7 @@ void ofApp::drawLevel()
 
 	if (stage == EASY_PLAY)
 	{
-		//day.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		day.draw(0, 0, APP_WIDTH, APP_HEIGT);
 		cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
 		cam.begin();
 		for (list<Floor>::iterator it = easy_floors.begin(); it != easy_floors.end(); ++it)
@@ -1405,7 +1407,7 @@ void ofApp::drawLevel()
 	}
 	else if (stage == HARD_PLAY)
 	{
-		//night.draw(0, 0, APP_WIDTH, APP_HEIGT);
+		night.draw(0, 0, APP_WIDTH, APP_HEIGT);
 		cam.setGlobalPosition(player->position.x, player->position.y + player->yVelocity, player->position.z + player->zVelocity + 50);
 		cam.begin();
 		if (player->is_slide)
@@ -1435,28 +1437,12 @@ void ofApp::drawLevel()
 
 void ofApp::drawDeath()
 {
-	//DEATH COOL SCREEN
-	string s = "YOU DIED - JUMP TO GO TO MENU";
-	ofRectangle rs;
-	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
-	ofPushMatrix();
-	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
-	ofSetColor(255);
-	saltingTypo.drawString(s, 0, 0);
-	ofPopMatrix();
+	death.draw(0, 0, APP_WIDTH, APP_HEIGT);
 }
 
 void ofApp::drawEnd()
 {
-	//END SCREEN COOL
-	string s = "YOU WIN! - JUMP TO GO TO MENU";
-	ofRectangle rs;
-	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
-	ofPushMatrix();
-	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
-	ofSetColor(255);
-	saltingTypo.drawString(s, 0, 0);
-	ofPopMatrix();
+	win.draw(0, 0, APP_WIDTH, APP_HEIGT);
 }
 
 void ofApp::drawTutorial()
