@@ -200,6 +200,7 @@ public:
 	ofImage night;
 	ofImage win;
 	ofImage death;
+	ofImage tutoriale;
 
 	void restartGame();
 };

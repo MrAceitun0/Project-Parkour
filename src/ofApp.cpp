@@ -250,6 +250,7 @@ void ofApp::setup() {
 	night.loadImage("night.jpg");
 	win.loadImage("win.png");
 	death.loadImage("death.png");
+	tutoriale.loadImage("tutorial.png");
 }
 
 //--------------------------------------------------------------
@@ -836,7 +837,7 @@ void ofApp::exit() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	// H + F1 + a : help, aide, ayuda, ajuda
-	// w : corner pin
+	// Y : corner pin
 	// J ajusta joc
 	// G : grid -> per development (cal descomentar a baix)
 	// D ajusta botons -> per development (cal descomentar a baix)
@@ -932,6 +933,15 @@ void ofApp::keyPressed(int key) {
 
 		}
 	}
+
+	if (key == 'z' || key == 'Z')
+	{
+		if (stage == EASY_PLAY || stage == HARD_PLAY)
+		{
+			stage = END;
+		}
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -1447,15 +1457,7 @@ void ofApp::drawEnd()
 
 void ofApp::drawTutorial()
 {
-	//END SCREEN COOL
-	string s = "TUTORIAL";
-	ofRectangle rs;
-	rs = saltingTypo.getStringBoundingBox(s, 0, 0);
-	ofPushMatrix();
-	ofTranslate(APP_WIDTH_MEITAT - rs.width*0.5, APP_HEIGT_MEITAT - rs.height*0.5);
-	ofSetColor(255);
-	saltingTypo.drawString(s, 0, 0);
-	ofPopMatrix();
+	tutoriale.draw(0, 0, APP_WIDTH, APP_HEIGT);
 }
 
 void ofApp::restartGame()
@@ -1597,8 +1599,8 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 2600, 0);
-		b.size = glm::vec3(100, 10, 60);
+		b.position = glm::vec3(i * 200, 2600, 75);
+		b.size = glm::vec3(100, 10, 200);
 		b.color = glm::vec3(255, 0, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
@@ -1606,8 +1608,8 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 3600, 65);
-		b.size = glm::vec3(100, 10, 100);
+		b.position = glm::vec3(i * 200, 3600, 140);
+		b.size = glm::vec3(100, 10, 250);
 		b.color = glm::vec3(0, 255, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
@@ -1622,7 +1624,7 @@ void ofApp::generateHardLevel()
 	for (int i = -1; i < 2; i++)
 	{
 		b.position = glm::vec3(i * 200, 6700, 0);
-		b.size = glm::vec3(100, 10, 30);
+		b.size = glm::vec3(100, 10, 40);
 		b.color = glm::vec3(0, 0, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
@@ -1630,8 +1632,8 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 7700, 65);
-		b.size = glm::vec3(100, 10, 100);
+		b.position = glm::vec3(i * 200, 7700, 140);
+		b.size = glm::vec3(100, 10, 250);
 		b.color = glm::vec3(0, 255, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
@@ -1639,8 +1641,8 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 8700, 0);
-		b.size = glm::vec3(100, 10, 60);
+		b.position = glm::vec3(i * 200, 8700, 100);
+		b.size = glm::vec3(100, 10, 200);
 		b.color = glm::vec3(255, 0, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
@@ -1648,8 +1650,8 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 9700, 0);
-		b.size = glm::vec3(100, 10, 60);
+		b.position = glm::vec3(i * 200, 9700, 100);
+		b.size = glm::vec3(100, 10, 200);
 		b.color = glm::vec3(255, 0, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
@@ -1663,8 +1665,8 @@ void ofApp::generateHardLevel()
 
 	for (int i = -1; i < 2; i++)
 	{
-		b.position = glm::vec3(i * 200, 11500, 65);
-		b.size = glm::vec3(100, 10, 100);
+		b.position = glm::vec3(i * 200, 11500, 140);
+		b.size = glm::vec3(100, 10, 250);
 		b.color = glm::vec3(0, 255, 255);
 		b.position.y += (b.size.y / 2);
 		hard_boxes.push_back(b);
